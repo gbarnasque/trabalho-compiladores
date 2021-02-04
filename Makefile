@@ -3,9 +3,8 @@
 etapa1: lex.yy.c
 	gcc lex.yy.c -o etapa1
 
-all: compile
-
-compile: gcc -o
+lex.yy.c: scanner.l
+	lex scanner.l
 
 clean: 
-	rm -rf *.o *.out *.exe lex.yy.c
+	rm etapa1 lex.yy.c
