@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
         printf("Encontrei TK_IDENTIFIER: %s\n", yytext);
         break;
       case LIT_INTEGER:
-        printf("Encontrei LIT_INTEGER\n");
+        printf("Encontrei LIT_INTEGER: %s\n", yytext);
         break;
       case LIT_TRUE:
         printf("Encontrei LIT_TRUE\n");

@@ -2,14 +2,14 @@
 
 HashNode* hashTable[HASH_SIZE];
 
-void init() {
+void hashInit() {
     int i;
     for(i=0; i<HASH_SIZE; i++) {
         hashTable[i] = NULL;
     }
 }
 
-int calculateAddress(char* text) {
+int hashCalculateAddress(char* text) {
     int address = 1;
     int i;
     for(i=0; i<strlen(text); i++) {
@@ -18,11 +18,10 @@ int calculateAddress(char* text) {
     return address-1;
 }
 
-HashNode* find(char* text) {
+HashNode* hashFind(char* text) {
     HashNode* ret = NULL;
-    int address = calculateAddress(text);
+    int address = hashCalculateAddress(text);
     
-
     //if(hashTable[address] == NULL)
         //return NULL;
 
@@ -34,14 +33,14 @@ HashNode* find(char* text) {
     return ret;
 }
 
-HashNode* insert(int type, char* text) {
+HashNode* hashInsert(int type, char* text) {
     HashNode* ret;
     int address;
 
-    if((ret = find(text)) != NULL)
+    if((ret = hashFind(text)) != NULL)
         return ret;
     
-    address = calculateAddress(text);
+    address = hashCalculateAddress(text);
 
     ret = (HashNode*) malloc(sizeof(HashNode));
     ret->type = type;
@@ -58,7 +57,7 @@ void printHashTable() {
     for(i=0; i<HASH_SIZE; i++) {
         node = hashTable[i];
         while(node != NULL) {
-            printf("Tabela[%d] contem %s\n", i, node->text);
+            printf("Tabela[%d] contem token %d - %s\n", i, node->type, node->text);
             node = node->next;
         }
     }

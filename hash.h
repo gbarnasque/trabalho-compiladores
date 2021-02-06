@@ -8,8 +8,8 @@ typedef struct hash_node {
     struct hash_node* next;
 } HashNode;
 
-void init();
-int calculateAddress(char*);
-HashNode* find(char*);
-HashNode* insert(int, char*);
+void hashInit();
+int hashCalculateAddress(char*);
+HashNode* hashFind(char*);
+HashNode* hashInsert(int, char*);
 void printHashTable();

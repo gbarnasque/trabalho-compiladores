@@ -30,14 +30,14 @@
 "<-"          {return LEFT_ASSIGN;}
 "->"          {return RIGHT_ASSIGN;}
 
-[0-9]+        {insert(LIT_INTEGER, yytext);return LIT_INTEGER;}
-\'.\'         {insert(LIT_CHAR, yytext);return LIT_CHAR;}
-\".+\"        {insert(LIT_STRING, yytext);return LIT_STRING;}
-"true"        {insert(LIT_TRUE, yytext);return LIT_TRUE;}
-"false"       {insert(LIT_FALSE, yytext);return LIT_FALSE;}
+[0-9]+        {hashInsert(LIT_INTEGER, yytext); return LIT_INTEGER;}
+\'.\'         {hashInsert(LIT_CHAR, yytext); return LIT_CHAR;}
+\".+\"        {hashInsert(LIT_STRING, yytext); return LIT_STRING;}
+"true"        {hashInsert(LIT_TRUE, yytext); return LIT_TRUE;}
+"false"       {hashInsert(LIT_FALSE, yytext); return LIT_FALSE;}
 
 [-,;:()\[\]{}+*/<>\|\&\~$#] {return yytext[0];}
-[_a-zA-z][_0-9a-zA-Z]*      {insert(TK_IDENTIFIER, yytext);return TK_IDENTIFIER;}
+[_a-zA-z][_0-9a-zA-Z]*      {hashInsert(TK_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 
 "\n"          { ++lineNumber;}
 [ \t] 
