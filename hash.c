@@ -1,4 +1,7 @@
-//#include "hash.h"
+/*
+    Autor: Gustavo Oliva Barnasque
+    Matricula: 00263056
+*/
 
 HashNode* hashTable[HASH_SIZE];
 

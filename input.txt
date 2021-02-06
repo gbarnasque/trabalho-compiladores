@@ -1,4 +1,9 @@
-/*int 32432
+/*
+    Autor: Gustavo Oliva Barnasque
+    Matricula: 00263056
+*/
+/*
+int 32432
 {
 */
 char
@@ -19,10 +24,14 @@ return
 <-
 ->
 - , ; : ( ) { } + * / < > | & ~ $ #
-123
-'1'
-"123"
-"\"\"teste\""
+123 321
+'1''2'
+'\n'
+''
+"123""321"
+""
+"\"teste\"\""
+"\"teste\n\"\n"
 true
 false
     /* teste
@@ -33,8 +42,19 @@ false
 teste
 oi
 SOu_234uma_variavel
+
+
 SOu_234uma_variavel
 _var123
+
+
 1234var
 
-
+int main() {
+    int nota;
+    char* aluno <- "Gustavo";
+    if(strcmp(aluno,"Gustavo") == 0) {
+        nota <- 10;
+    }
+    return 1;
+}

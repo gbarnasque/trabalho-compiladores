@@ -1,4 +1,7 @@
-#include <stdlib.h>
+/*
+    Autor: Gustavo Oliva Barnasque
+    Matricula: 00263056
+*/
 
 #define HASH_SIZE 997
 

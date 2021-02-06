@@ -1,16 +1,26 @@
+/*
+  Autor: Gustavo Oliva Barnasque
+  Matricula: 00263056
+*/
+
 int main(int argc, char** argv) {
   int token;
   
   if(argc < 2) {
-    fprintf(stderr, "Call: ./a.out file_name\n");
+    fprintf(stderr, "Call: ./etapa1 file_name\n");
     exit(1);
   }
 
   yyin = fopen(argv[1], "r");
 
+  if(yyin == 0){
+    fprintf(stderr, "Unable to open file %s\n", argv[1]);
+    exit(1);
+  }
 
+  initMe();
 
-  while(running) {
+  while(isRunning()) {
     token = yylex();
 
     if(running == 0)
@@ -18,85 +28,83 @@ int main(int argc, char** argv) {
 
     switch(token) {
       case KW_CHAR: 
-        printf("Encontrei KW_CHAR\n");
+        printf("Linha %d: Encontrei KW_CHAR\n", getLineNumber());
         break;
       case KW_INT:
-        printf("Encontrei KW_INT\n");
+        printf("Linha %d: Encontrei KW_INT\n", getLineNumber());
         break;
       case KW_BOOL: 
-        printf("Encontrei KW_BOOL\n");
+        printf("Linha %d: Encontrei KW_BOOL\n", getLineNumber());
         break;
       case KW_POINTER: 
-        printf("Encontrei KW_POINTER\n");
+        printf("Linha %d: Encontrei KW_POINTER\n", getLineNumber());
         break;
       case KW_IF: 
-        printf("Encontrei KW_IF\n");
+        printf("Linha %d: Encontrei KW_IF\n", getLineNumber());
         break;
       case KW_THEN: 
-        printf("Encontrei KW_THEN\n");
+        printf("Linha %d: Encontrei KW_THEN\n", getLineNumber());
         break;
       case KW_ELSE: 
-        printf("Encontrei KW_ELSE\n");
+        printf("Linha %d: Encontrei KW_ELSE\n", getLineNumber());
         break;
       case KW_WHILE: 
-        printf("Encontrei KW_WHILE\n");
+        printf("Linha %d: Encontrei KW_WHILE\n", getLineNumber());
         break;
       case KW_READ: 
-        printf("Encontrei KW_READ\n");
+        printf("Linha %d: Encontrei KW_READ\n", getLineNumber());
         break;
       case KW_PRINT: 
-        printf("Encontrei KW_PRINT\n");
+        printf("Linha %d: Encontrei KW_PRINT\n", getLineNumber());
         break;
       case KW_RETURN: 
-        printf("Encontrei KW_RETURN\n");
+        printf("Linha %d: Encontrei KW_RETURN\n", getLineNumber());
         break;
       case OPERATOR_LE: 
-        printf("Encontrei OPERATOR_LE\n");
+        printf("Linha %d: Encontrei OPERATOR_LE\n", getLineNumber());
         break;
       case OPERATOR_GE: 
-        printf("Encontrei OPERATOR_GE\n");
+        printf("Linha %d: Encontrei OPERATOR_GE\n", getLineNumber());
         break;
       case OPERATOR_EQ: 
-        printf("Encontrei OPERATOR_EQ\n");
+        printf("Linha %d: Encontrei OPERATOR_EQ\n", getLineNumber());
         break;
       case OPERATOR_DIF: 
-        printf("Encontrei OPERATOR_DIF\n");
+        printf("Linha %d: Encontrei OPERATOR_DIF\n", getLineNumber());
         break;
       case LEFT_ASSIGN: 
-        printf("Encontrei LEFT_ASSIGN\n");
+        printf("Linha %d: Encontrei LEFT_ASSIGN\n", getLineNumber());
         break;
       case RIGHT_ASSIGN: 
-        printf("Encontrei RIGHT_ASSIGN\n");
+        printf("Linha %d: Encontrei RIGHT_ASSIGN\n", getLineNumber());
         break;
       case TK_IDENTIFIER:
-        printf("Encontrei TK_IDENTIFIER: %s\n", yytext);
+        printf("Linha %d: Encontrei TK_IDENTIFIER: %s\n", getLineNumber(), yytext);
         break;
       case LIT_INTEGER:
-        printf("Encontrei LIT_INTEGER: %s\n", yytext);
+        printf("Linha %d: Encontrei LIT_INTEGER: %s\n", getLineNumber(), yytext);
         break;
       case LIT_TRUE:
-        printf("Encontrei LIT_TRUE\n");
+        printf("Linha %d: Encontrei LIT_TRUE\n", getLineNumber());
         break;
       case LIT_FALSE:
-        printf("Encontrei LIT_FALSE\n");
+        printf("Linha %d: Encontrei LIT_FALSE\n", getLineNumber());
         break;
       case LIT_CHAR:
-        printf("Encontrei LIT_CHAR: %s\n", yytext);
+        printf("Linha %d: Encontrei LIT_CHAR: %s\n", getLineNumber(), yytext);
         break;
       case LIT_STRING:
-        printf("Encontrei LIT_STRING: %s\n", yytext);
+        printf("Linha %d: Encontrei LIT_STRING: %s\n", getLineNumber(), yytext);
         break;
       case TOKEN_ERROR:
-        printf("Unexpected token: %d\n", token);
+        printf("Linha %d: Unexpected token: %d\n", getLineNumber(), token);
         break;
       default:
-        printf("Encontrei %c\n", yytext[0]);
+        printf("Linha %d: Encontrei %c\n", getLineNumber(), yytext[0]);
         break;
     }
   }
-  //printf("File has %d lines\n", lineNumber);
   printf("File has %d lines\n", getLineNumber());
-
   printHashTable();
   printf("Main done!\n");
 
