@@ -1,11 +1,36 @@
 /*int 32432
 {
 */
+char
 int
-23421
-23421
+bool
+pointer
+if
+then
+else
+while
+read
+print
+return
+<=
+>=
+==
+!=
+<-
+->
+- , ; : ( ) { } + * / < > | & ~ $ #
+123
+'1'
+"123"
+"\"\"teste\""
+true
+false
     /* teste
     testeT + + 
     */
     + *
 }
+teste
+oi
+SOu_234uma_variavel
+_var123
