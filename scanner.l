@@ -1,12 +1,22 @@
 %{
   /*
-    Autor: Gustavo Oliva Barnasque
-    Matricula: 00263056
-  */
+   *  Autor: Gustavo Oliva Barnasque
+   *  Matricula: 00263056
+   */
+
   #include <stdlib.h>
   #include <stdio.h>
-  #include "tokens.h"
+  #include "y.tab.h"
   #include "hash.h"
+
+  #define SYMBOL_LIT_INT    1
+  #define SYMBOL_LIT_CHAR   2
+  #define SYMBOL_LIT_STRING 3
+  #define SYMBOL_LIT_TRUE   4
+  #define SYMBOL_LIT_FALSE  5
+  #define SYMBOL_IDENTIFIER 6
+
+
   int running = 1;
   int lineNumber = 1;
 
@@ -48,13 +58,13 @@
 
 "true"        {return LIT_TRUE;}
 "false"       {return LIT_FALSE;}
-[0-9]+        {hashInsert(LIT_INTEGER, yytext); return LIT_INTEGER;}
-'[^']*'       {hashInsert(LIT_CHAR, yytext); return LIT_CHAR;}
-\"((\\\")*[^\"]*)*\"        {hashInsert(LIT_STRING, yytext); return LIT_STRING;}
+[0-9]+        {hashInsert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER;}
+'[^']*'       {hashInsert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR;}
+\"((\\\")*[^\"]*)*\"        {hashInsert(SYMBOL_LIT_STRING, yytext); return LIT_STRING;}
 
 
 [-,;:()\[\]{}+*/<>\|\&\~$#] {return yytext[0];}
-[_a-zA-z][_0-9a-zA-Z]*      {hashInsert(TK_IDENTIFIER, yytext); return TK_IDENTIFIER;}
+[_a-zA-z][_0-9a-zA-Z]*      {hashInsert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 
 "\n"          { ++lineNumber;}
 [ \t] 
@@ -69,6 +79,7 @@
 
 %%
 
+#include "y.tab.c"
 #include "hash.c"
 #include "main.c"
 
