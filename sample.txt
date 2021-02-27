@@ -7,12 +7,16 @@ int a :  'A';
 int i :  0;
 int[10] v : 0 0 0 0 0 0 0 0 0 0; 
 int [ 10] mat ; 
+pointer p : 'a';
+
+bool test(int com, bool parametros) {
+};
 
 int main () 
   {
-  a <- 5;
-  v[a] <- 55;
-  print v[55];
+  aqui <- 69;
+  v[va] <- 55;
+  print vet[55];
   2 -> i;
 
   print "Digite um numero: \n";

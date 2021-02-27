@@ -6,7 +6,7 @@
 ETAPA=etapa2
 
 ${ETAPA}: y.tab.c lex.yy.c
-	gcc lex.yy.c -o ${ETAPA}
+	gcc lex.yy.c -o ${ETAPA} -Wall
 
 y.tab.c: parser.y
 	yacc -d parser.y

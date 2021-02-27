@@ -35,6 +35,12 @@
 
 %token TOKEN_ERROR
 
+
+%left '|' '&'
+%left '<' '>' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_DIF
+%left '+' '-'
+%left '*' '/'
+
 %{
     // C Code before the rules
     int yyerror(); // yyerror declaration
@@ -43,8 +49,7 @@
 %%
 
 // regras
-programa: programa variaveis 
-    |
+programa: l_declaracao 
     ;
 
 tipo: KW_BOOL
@@ -63,7 +68,10 @@ literal_rec: literal literal_rec
     |
     ;
 
-variaveis: tipo TK_IDENTIFIER ':' literal ';'
+variavel: tipo TK_IDENTIFIER
+    ;
+
+variaveis: variavel ':' literal ';'
     | vetor
     ;
 
@@ -71,85 +79,95 @@ vetor: tipo '[' LIT_INTEGER ']' TK_IDENTIFIER ':' literal_rec ';'
     | tipo '[' LIT_INTEGER ']' TK_IDENTIFIER ';'
     ;
 
-terminador_ponto_virgula: ';'
-    ;
-/*
-funcao: cabecalho_funcao corpo_funcao
+l_declaracao: declaracao l_declaracao
+    | 
     ;
 
-cabecalho_funcao:
-    ;
-
-corpo_funcao: comando
-    ;
-
-comando:
-    ;
-
-bloco:
+declaracao: variaveis
+    | funcao
     ;
 
 
+funcao: cabecalho_funcao corpo_funcao ';'
+    ;
 
-
-
-
-decl: dec resto
+cabecalho_funcao: variavel '(' l_parametros_declaracao ')'
+    ;
+l_parametros_declaracao: variavel
+    | variavel ',' l_parametros_declaracao
     |
     ;
 
-resto: ',' dec resto 
+funcao_chamada: TK_IDENTIFIER '(' l_parametros_chamada')'
+    ;
+l_parametros_chamada: expressao
+    | expressao ',' l_parametros_chamada
     |
     ;
 
-dec:  KW_INT TK_IDENTIFIER
-    | KW_INT TK_IDENTIFIER '(' ')' body
+corpo_funcao: bloco_comandos
     ;
 
-body: '{' lcmd '}'
+bloco_comandos: '{' l_comando '}'
     ;
 
-lcmd: cmd lcmd
+l_comando: comando
+    | comando ';' l_comando 
+    ;
+
+comando: TK_IDENTIFIER LEFT_ASSIGN expressao
+    | expressao RIGHT_ASSIGN TK_IDENTIFIER
+    | TK_IDENTIFIER '[' expressao ']' LEFT_ASSIGN expressao
+    | expressao RIGHT_ASSIGN TK_IDENTIFIER '[' expressao ']'
+    | fluxo
+    | KW_READ TK_IDENTIFIER
+    | KW_PRINT l_expressao_string
+    | KW_RETURN expressao 
+    | bloco_comandos
     |
     ;
 
-cmd: TK_IDENTIFIER LEFT_ASSIGN expr
-    | expr RIGHT_ASSIGN TK_IDENTIFIER
+l_expressao_string: LIT_STRING
+    | expressao
+    | LIT_STRING ',' l_expressao_string
+    | expressao ',' l_expressao_string
     ;
 
-expr: LIT_INTEGER
-    | LIT_TRUE
-    | LIT_FALSE
-    | LIT_CHAR
-    | LIT_STRING
+fluxo: KW_IF '(' expressao ')' KW_THEN comando
+    | KW_IF '(' expressao ')' KW_THEN comando KW_ELSE comando
+    | KW_WHILE '(' expressao ')' comando
+    
+
+expressao: literal
     | TK_IDENTIFIER
-    | expr '+' expr
-    | expr '-' expr
-    | expr '*' expr
-    | expr '/' expr
-    | expr '<' expr
-    | expr '>' expr
-    | expr '|' expr
-    | expr '&' expr
-    | expr '~' expr
-    | expr '$' expr
-    | expr '#' expr
-    | expr OPERATOR_LE expr
-    | expr OPERATOR_GE expr
-    | expr OPERATOR_EQ expr
-    | expr OPERATOR_DIF expr
-    | '(' expr ')'
-    | '~' expr
-    | '$' expr
-    | '#' expr
+    | TK_IDENTIFIER '[' expressao ']'
+    | '(' expressao ')'
+    | expressao '+' expressao
+    | expressao '-' expressao
+    | expressao '*' expressao
+    | expressao '/' expressao
+    | expressao '<' expressao
+    | expressao '>' expressao 
+    | expressao '|' expressao
+    | expressao '&' expressao
+    | '~' expressao
+    | '$' expressao
+    | '#' expressao
+    | expressao OPERATOR_LE expressao
+    | expressao OPERATOR_GE expressao
+    | expressao OPERATOR_EQ expressao
+    | expressao OPERATOR_DIF expressao
+    | funcao_chamada
     ;
-    */
+
 %%
 
 // Anything in C
 
 int yyerror() {
     fprintf(stderr, "Syntar Error at Line: %d near \"%s\"\n", getLineNumber(), yytext);
-    printHashTable();
+    
+    //printHashTable(); // For Debug Purposes
+    
     exit(3);
 }
