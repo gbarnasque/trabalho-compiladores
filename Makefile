@@ -6,10 +6,10 @@
 ETAPA=etapa2
 
 ${ETAPA}: y.tab.c lex.yy.c
-	gcc lex.yy.c -o ${ETAPA} -Wall
+	gcc lex.yy.c -o ${ETAPA}
 
-y.tab.c: 
-	yacc parser.y -d
+y.tab.c: parser.y
+	yacc -d parser.y
 
 lex.yy.c: scanner.l
 	lex scanner.l

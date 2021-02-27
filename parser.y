@@ -43,9 +43,56 @@
 %%
 
 // regras
-
-programa: decl 
+programa: programa variaveis 
+    |
     ;
+
+tipo: KW_BOOL
+    | KW_CHAR
+    | KW_INT
+    | KW_POINTER
+    ;
+
+literal: LIT_INTEGER
+    | LIT_CHAR
+    | LIT_TRUE
+    | LIT_FALSE
+    ;
+
+literal_rec: literal literal_rec
+    |
+    ;
+
+variaveis: tipo TK_IDENTIFIER ':' literal ';'
+    | vetor
+    ;
+
+vetor: tipo '[' LIT_INTEGER ']' TK_IDENTIFIER ':' literal_rec ';'
+    | tipo '[' LIT_INTEGER ']' TK_IDENTIFIER ';'
+    ;
+
+terminador_ponto_virgula: ';'
+    ;
+/*
+funcao: cabecalho_funcao corpo_funcao
+    ;
+
+cabecalho_funcao:
+    ;
+
+corpo_funcao: comando
+    ;
+
+comando:
+    ;
+
+bloco:
+    ;
+
+
+
+
+
 
 decl: dec resto
     |
@@ -96,11 +143,13 @@ expr: LIT_INTEGER
     | '$' expr
     | '#' expr
     ;
+    */
 %%
 
 // Anything in C
 
 int yyerror() {
-    fprintf(stderr, "Syntar Error at Line: %d\n", getLineNumber());
+    fprintf(stderr, "Syntar Error at Line: %d near \"%s\"\n", getLineNumber(), yytext);
+    printHashTable();
     exit(3);
 }

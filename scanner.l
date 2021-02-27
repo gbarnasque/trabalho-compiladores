@@ -59,12 +59,14 @@
 "true"        {return LIT_TRUE;}
 "false"       {return LIT_FALSE;}
 [0-9]+        {hashInsert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER;}
+
+
+
+[-,;:()\[\]{}+*/<>|&~$#] {return yytext[0];}
+[_a-zA-Z][_0-9a-zA-Z]*      {hashInsert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
+
 '[^']*'       {hashInsert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR;}
 \"((\\\")*[^\"]*)*\"        {hashInsert(SYMBOL_LIT_STRING, yytext); return LIT_STRING;}
-
-
-[-,;:()\[\]{}+*/<>\|\&\~$#] {return yytext[0];}
-[_a-zA-z][_0-9a-zA-Z]*      {hashInsert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 
 "\n"          { ++lineNumber;}
 [ \t] 
