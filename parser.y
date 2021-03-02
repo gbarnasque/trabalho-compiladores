@@ -37,7 +37,7 @@
 
 
 %left '|' '&'
-%left '<' '>' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_DIF
+%left '<' '>' OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
 %left '+' '-'
 %left '*' '/'
 
@@ -165,7 +165,7 @@ expressao: literal
 // Anything in C
 
 int yyerror() {
-    fprintf(stderr, "Syntar Error at Line: %d near \"%s\"\n", getLineNumber(), yytext);
+    fprintf(stderr, "Syntax Error at Line: %d near \"%s\"\n", getLineNumber(), yytext);
     
     //printHashTable(); // For Debug Purposes
     
