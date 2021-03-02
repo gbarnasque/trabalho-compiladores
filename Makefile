@@ -9,7 +9,7 @@ ${ETAPA}: y.tab.c lex.yy.c
 	gcc lex.yy.c -o ${ETAPA} -Wall
 
 y.tab.c: parser.y
-	yacc -d -v parser.y
+	yacc -d parser.y
 
 lex.yy.c: scanner.l
 	lex scanner.l
