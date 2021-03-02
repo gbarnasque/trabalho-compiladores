@@ -35,11 +35,12 @@
 
 %token TOKEN_ERROR
 
-
-%left '|' '&'
-%left '<' '>' OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
 %left '+' '-'
 %left '*' '/'
+%left '|' '&'
+%left '<' '>' OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
+%left '~' '$' '#'
+
 
 %{
     // C Code before the rules

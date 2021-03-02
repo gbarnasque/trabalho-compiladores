@@ -9,10 +9,10 @@ ${ETAPA}: y.tab.c lex.yy.c
 	gcc lex.yy.c -o ${ETAPA} -Wall
 
 y.tab.c: parser.y
-	yacc -d parser.y
+	yacc -d -v parser.y
 
 lex.yy.c: scanner.l
 	lex scanner.l
 
 clean: 
-	rm ${ETAPA} lex.yy.c y.tab.*
+	rm ${ETAPA} lex.yy.c y.tab.* y.output
