@@ -9,7 +9,7 @@ int[10] v : 0 0 0 0 0 0 0 0 0 0;
 int [ 10] mat ; 
 pointer p : 'a';
 
-bool test(int com, bool parametros) {
+bool test(int com, bool c, pointer ahga) {
 };
 
 pointer t() {};
@@ -52,7 +52,7 @@ int main ()
       aqui <- aqui2
     else {
       false -> s;
-    }
+    };
   };
 
 int incn (int x , int n )

@@ -94,15 +94,19 @@ funcao: cabecalho_funcao corpo_funcao ';'
 
 cabecalho_funcao: variavel '(' l_parametros_declaracao ')'
     ;
-l_parametros_declaracao: variavel
-    | variavel ',' l_parametros_declaracao
+l_parametros_declaracao: variavel lc_parametros_declaracao
+    |
+    ;
+lc_parametros_declaracao: ',' variavel lc_parametros_declaracao
     |
     ;
 
 funcao_chamada: TK_IDENTIFIER '(' l_parametros_chamada')'
     ;
-l_parametros_chamada: expressao
-    | expressao ',' l_parametros_chamada
+l_parametros_chamada: expressao lc_parametros_chamada
+    |
+    ;
+lc_parametros_chamada: ',' expressao lc_parametros_chamada
     |
     ;
 
@@ -112,8 +116,11 @@ corpo_funcao: bloco_comandos
 bloco_comandos: '{' l_comando '}'
     ;
 
-l_comando: comando
-    | comando ';' l_comando 
+l_comando: comando lc_comando
+    |
+    ;
+lc_comando: ';' comando lc_comando
+    | ';' 
     ;
 
 comando: TK_IDENTIFIER LEFT_ASSIGN expressao
