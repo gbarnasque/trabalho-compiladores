@@ -1,7 +1,7 @@
 /*
-    Autor: Gustavo Oliva Barnasque
-    Matricula: 00263056
-*/
+ *  Autor: Gustavo Oliva Barnasque
+ *  Matricula: 00263056
+ */
 
 #define HASH_SIZE 997
 
@@ -16,3 +16,4 @@ int hashCalculateAddress(char*);
 HashNode* hashFind(char*);
 HashNode* hashInsert(int, char*);
 void printHashTable();
+char* getSymbolText(int);
