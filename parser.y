@@ -2,10 +2,17 @@
     /*  
      *  Autor: Gustavo Oliva Barnasque
      *  Matricula: 00263056
-     *
-     *  Token region
      */ 
+
+     AstNode* astFinal;
 %}
+
+%union 
+{
+    HashNode* symbol;
+    AstNode* ast;
+}
+
 %token KW_CHAR
 %token KW_INT
 %token KW_BOOL
@@ -25,9 +32,9 @@
 %token OPERATOR_DIF
 %token LEFT_ASSIGN
 %token RIGHT_ASSIGN
-%token TK_IDENTIFIER
+%token<symbol> TK_IDENTIFIER
 
-%token LIT_INTEGER
+%token<symbol> LIT_INTEGER  
 %token LIT_TRUE
 %token LIT_FALSE
 %token LIT_CHAR
@@ -35,12 +42,20 @@
 
 %token TOKEN_ERROR
 
+%type<symbol> literal
+%type<ast> expressao
+%type<ast> programa
+%type<ast> l_declaracao
+
+
 %left '+' '-'
 %left '*' '/'
 %left '|' '&'
 %left '<' '>' OPERATOR_GE OPERATOR_LE OPERATOR_EQ OPERATOR_DIF
 %left '~' '$' '#'
 
+%nonassoc KW_THEN
+%nonassoc KW_ELSE
 
 %{
     // C Code before the rules
@@ -50,7 +65,7 @@
 %%
 
 // regras
-programa: l_declaracao 
+programa: l_declaracao {astFinal = $1; astPrint($1, 0);}
     ;
 
 tipo: KW_BOOL
@@ -59,7 +74,7 @@ tipo: KW_BOOL
     | KW_POINTER
     ;
 
-literal: LIT_INTEGER
+literal: LIT_INTEGER { /*fprintf(stderr, "value = %d\n", $1);*/ }
     | LIT_CHAR
     | LIT_TRUE
     | LIT_FALSE
@@ -123,7 +138,7 @@ lc_comando: ';' comando lc_comando
     | ';' 
     ;
 
-comando: TK_IDENTIFIER LEFT_ASSIGN expressao
+comando: TK_IDENTIFIER LEFT_ASSIGN expressao    { astPrint($3, 0); }
     | expressao RIGHT_ASSIGN TK_IDENTIFIER
     | TK_IDENTIFIER '[' expressao ']' LEFT_ASSIGN expressao
     | expressao RIGHT_ASSIGN TK_IDENTIFIER '[' expressao ']'
@@ -146,15 +161,15 @@ fluxo: KW_IF '(' expressao ')' KW_THEN comando
     | KW_WHILE '(' expressao ')' comando
     
 
-expressao: literal
-    | TK_IDENTIFIER
+expressao: literal              { $$ = astCreate(AST_SYMBOL, $1, NULL, NULL, NULL, NULL); }
+    | TK_IDENTIFIER             { $$ = astCreate(AST_SYMBOL, $1, NULL, NULL, NULL, NULL); }
     | TK_IDENTIFIER '[' expressao ']'
-    | '(' expressao ')'
-    | expressao '+' expressao
-    | expressao '-' expressao
-    | expressao '*' expressao
-    | expressao '/' expressao
-    | expressao '<' expressao
+    | '(' expressao ')'         { $$ = $2; }
+    | expressao '+' expressao   { $$ = astCreate(AST_ADD, NULL, $1, $3, NULL, NULL); /*fprintf(stderr, "%d + %d = %d\n", $1, $3, $1 + $3);*/ }
+    | expressao '-' expressao   
+    | expressao '*' expressao   { $$ = astCreate(AST_MULT, NULL, $1, $3, NULL, NULL); }
+    | expressao '/' expressao   
+    | expressao '<' expressao   
     | expressao '>' expressao 
     | expressao '|' expressao
     | expressao '&' expressao

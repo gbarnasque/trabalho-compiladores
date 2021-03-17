@@ -3,10 +3,10 @@
 #
 # Makefile para etapa 2 de compiladores 
 
-ETAPA=etapa2
+ETAPA=etapa3
 
 ${ETAPA}: y.tab.c lex.yy.c
-	gcc lex.yy.c -o ${ETAPA} -Wall
+	gcc lex.yy.c -o ${ETAPA}
 
 y.tab.c: parser.y
 	yacc -d parser.y

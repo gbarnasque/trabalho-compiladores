@@ -3,16 +3,22 @@
  *  Matricula: 00263056
  */
 
+FILE* out_arq;
+
+void descompiladorAST(AstNode* arvore) {
+  astPrint(arvore, 0);
+}
+
 int main(int argc, char** argv) {
   //int token;
   
-  if(argc < 2) {
-    fprintf(stderr, "Call: ./etapa2 file_name\n");
+  if(argc < 3) {
+    fprintf(stderr, "Call: ./etapa3 file_in_name file_out_name\n");
     exit(1);
-  }
+  }  
 
   yyin = fopen(argv[1], "r");
-
+  
   if(yyin == 0){
     fprintf(stderr, "Unable to open file: %s\n", argv[1]);
     exit(2);
@@ -22,8 +28,15 @@ int main(int argc, char** argv) {
 
   yyparse();
 
+  out_arq = fopen(argv[2], "w+");
+  if(out_arq == 0){
+    fprintf(stderr, "Unable to open file: %s\n", argv[2]);
+    exit(2);
+  }
+  descompiladorAST(astFinal);
+
   printf("File has %d lines\n", getLineNumber());
-  printHashTable();
+  //printHashTable();
   printf("Compilation successful!\n");
 
   /*while(isRunning()) {
