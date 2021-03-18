@@ -51,3 +51,4 @@
 #define AST_OP_DIF 50
 #define AST_RETURN 51
 #define AST_VETOR_TAMANHO 52
+#define AST_END_PROGRAM 53

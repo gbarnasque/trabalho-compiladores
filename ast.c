@@ -28,7 +28,7 @@ void astPrint(AstNode* node, int level) {
 
     printNodeType(node->type);
 
-    if(node->symbol != 0)
+    if(node->symbol != NULL)
         fprintf(stderr, ",%s\n", node->symbol->text);
     else 
         fprintf(stderr, ",''\n");
@@ -93,7 +93,7 @@ void printNodeType(int type) {
         case AST_OP_DIF: fprintf(stderr, "AST_OP_DIF"); break;
         case AST_RETURN: fprintf(stderr, "AST_RETURN"); break;
         case AST_VETOR_TAMANHO: fprintf(stderr, "AST_VETOR_TAMANHO"); break;
-    
+        case AST_END_PROGRAM: fprintf(stderr, ")"); break;
         default:
             fprintf(stderr, "AST_UNKNOW");
             break;

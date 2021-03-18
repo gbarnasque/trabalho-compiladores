@@ -134,7 +134,7 @@ void descompiladorAST(AstNode* node, FILE* arq) {
 
   switch (node->type)
   {
-    case AST_SYMBOL: fprintf(stderr, "AST_SYMBOL"); break;
+    case AST_SYMBOL: fprintf(arq, "%s", node->symbol->text); break;
     case AST_T_BOOL: fprintf(stderr, "AST_T_BOOL"); break;
     case AST_T_CHAR: fprintf(stderr, "AST_T_CHAR"); break;
     case AST_T_INT: fprintf(stderr, "AST_T_INT"); break;
@@ -191,5 +191,5 @@ void descompiladorAST(AstNode* node, FILE* arq) {
   }
   
   fprintf(arq, "chegou aqui dsadasdsadase novo");
-  astPrint(node, 0);
+  //astPrint(node, 0);
 }

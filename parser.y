@@ -86,7 +86,7 @@
 %%
 
 // regras
-programa: l_declaracao { $$ = $1; astFinal = $1; astPrint(astFinal, 0);}
+programa: l_declaracao { $$ = $1; astFinal = $$; astPrint(astFinal, 0);}
     ;
 
 tipo: KW_BOOL       { $$ = astCreate(AST_T_BOOL, NULL, NULL, NULL, NULL, NULL); }
@@ -128,19 +128,19 @@ declaracao: variaveis   { $$ = $1; }
 funcao: cabecalho_funcao corpo_funcao ';'                           { $$ = astCreate(AST_FUNCAO, NULL, $1, $2, NULL, NULL); }
     ;
 
-cabecalho_funcao: variavel '(' l_parametros_declaracao ')'          { $$ = astCreate(AST_FUNCAO_CABECALHO, NULL, $1, $3, NULL, NULL); }
+cabecalho_funcao: tipo TK_IDENTIFIER '(' l_parametros_declaracao ')'          { $$ = astCreate(AST_FUNCAO_CABECALHO, $2, $1, $4, NULL, NULL); }
     ;
-l_parametros_declaracao: variavel lc_parametros_declaracao          { $$ = astCreate(AST_LISTA_PARAMETROS_DECLARACAO, NULL, $1, $2, NULL, NULL); }
-    |                                                               { $$ = NULL; }
+l_parametros_declaracao: tipo TK_IDENTIFIER lc_parametros_declaracao          { $$ = astCreate(AST_LISTA_PARAMETROS_DECLARACAO, $2, $1, $3, NULL, NULL); }
+    |                                                                         { $$ = NULL; }
     ;
-lc_parametros_declaracao: ',' variavel lc_parametros_declaracao     { $$ = astCreate(AST_LISTA_PARAMETROS_DECLARACAO_C, NULL, $2, $3, NULL, NULL); }
-    |                                                               { $$ = NULL; }
+lc_parametros_declaracao: ',' tipo TK_IDENTIFIER lc_parametros_declaracao     { $$ = astCreate(AST_LISTA_PARAMETROS_DECLARACAO_C, $3, $2, $4, NULL, NULL); }
+    |                                                                         { $$ = NULL; }
     ;
 
 funcao_chamada: TK_IDENTIFIER '(' l_parametros_chamada')'   { $$ = astCreate(AST_FUNCAO_CHAMADA, $1, $3, NULL, NULL, NULL); }
     ;
 l_parametros_chamada: expressao lc_parametros_chamada       { $$ = astCreate(AST_LISTA_PARAMETROS, NULL, $1, $2, NULL, NULL); }
-    |                                                       { $$ = NULL;}
+    |                                                       { $$ = NULL; }
     ;
 lc_parametros_chamada: ',' expressao lc_parametros_chamada  { $$ = astCreate(AST_LISTA_PARAMETROS_CHAMADA_C, NULL, $2, $3, NULL, NULL); }
     |                                                       { $$ = NULL; }
@@ -156,7 +156,7 @@ l_comando: comando lc_comando       { $$ = astCreate(AST_LISTA_COMANDOS, NULL, $
     |                               { $$ = NULL; }
     ;
 lc_comando: ';' comando lc_comando  { $$ = astCreate(AST_LISTA_COMANDOS_C, NULL, $2, $3, NULL, NULL); }
-    | ';'                           { $$ = astCreate(AST_PONTOVIRGULA, $1, NULL, NULL, NULL, NULL); }
+    | ';'                           { $$ = 0; }
     ;
 
 comando: TK_IDENTIFIER LEFT_ASSIGN expressao                    { $$ = astCreate(AST_LEFT_ASSIGN, $1, $3, NULL, NULL, NULL); }
