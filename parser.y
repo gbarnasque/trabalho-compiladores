@@ -156,7 +156,7 @@ l_comando: comando lc_comando       { $$ = astCreate(AST_LISTA_COMANDOS, NULL, $
     |                               { $$ = NULL; }
     ;
 lc_comando: ';' comando lc_comando  { $$ = astCreate(AST_LISTA_COMANDOS_C, NULL, $2, $3, NULL, NULL); }
-    | ';'                           { $$ = 0; }
+    | ';'                           { $$ = astCreate(AST_PONTOVIRGULA, NULL, NULL, NULL, NULL, NULL);; }
     ;
 
 comando: TK_IDENTIFIER LEFT_ASSIGN expressao                    { $$ = astCreate(AST_LEFT_ASSIGN, $1, $3, NULL, NULL, NULL); }
@@ -179,7 +179,7 @@ l_expressao_string: LIT_STRING              { $$ = astCreate(AST_SYMBOL, $1, NUL
 
 fluxo: KW_IF '(' expressao ')' KW_THEN comando                  { $$ = astCreate(AST_IF, NULL, $3, $6, NULL, NULL); }
     | KW_IF '(' expressao ')' KW_THEN comando KW_ELSE comando   { $$ = astCreate(AST_IF_ELSE, NULL, $3, $6, $8, NULL); }
-    | KW_WHILE '(' expressao ')' comando                        { $$ = astCreate(AST_WHILE, NULL, $3, NULL, NULL, NULL); }
+    | KW_WHILE '(' expressao ')' comando                        { $$ = astCreate(AST_WHILE, NULL, $3, $5, NULL, NULL); }
     
 
 expressao: literal                      { $$ = $1; }
@@ -190,8 +190,8 @@ expressao: literal                      { $$ = $1; }
     | expressao '-' expressao           { $$ = astCreate(AST_OP_MINUS, NULL, $1, $3, NULL, NULL); /*fprintf(stderr, "%d - %d = %d\n", $1, $3, $1 - $3);*/ }
     | expressao '*' expressao           { $$ = astCreate(AST_OP_MULT, NULL, $1, $3, NULL, NULL); }
     | expressao '/' expressao           { $$ = astCreate(AST_OP_DIV, NULL, $1, $3, NULL, NULL); /*fprintf(stderr, "%d / %d = %d\n", $1, $3, $1 / $3);*/ }
-    | expressao '<' expressao           { $$ = astCreate(AST_OP_GR, NULL, $1, $3, NULL, NULL); }
-    | expressao '>' expressao           { $$ = astCreate(AST_OP_LO, NULL, $1, $3, NULL, NULL); }
+    | expressao '<' expressao           { $$ = astCreate(AST_OP_LO, NULL, $1, $3, NULL, NULL); }
+    | expressao '>' expressao           { $$ = astCreate(AST_OP_GR, NULL, $1, $3, NULL, NULL); }
     | expressao '|' expressao           { $$ = astCreate(AST_OP_PIPE, NULL, $1, $3, NULL, NULL); }
     | expressao '&' expressao           { $$ = astCreate(AST_OP_AND, NULL, $1, $3, NULL, NULL); }
     | '~' expressao                     { $$ = astCreate(AST_OP_TIL, NULL, $2, NULL, NULL, NULL); }

@@ -4,13 +4,11 @@
  */
 
 
-
-void descompiladorAST(AstNode*, FILE*);
+FILE* out_arq;
+void descompiladorAST(AstNode*);
 
 int main(int argc, char** argv) {
   
-  FILE* out_arq;
-
   if(argc < 3) {
     fprintf(stderr, "Call: ./etapa3 file_in_name file_out_name\n");
     exit(1);
@@ -33,8 +31,8 @@ int main(int argc, char** argv) {
     exit(2);
   }
 
-  descompiladorAST(astFinal, out_arq);
-  descompiladorAST(NULL, out_arq);
+  descompiladorAST(astFinal);
+  descompiladorAST(NULL);
 
   printf("File has %d lines\n", getLineNumber());
   //printHashTable();
@@ -128,68 +126,257 @@ int main(int argc, char** argv) {
   exit(0);
 }
 
-void descompiladorAST(AstNode* node, FILE* arq) {
+void descompiladorAST(AstNode* node) {
+  if(out_arq == 0)
+    return;
   if(node == NULL)
     return;
 
   switch (node->type)
   {
-    case AST_SYMBOL: fprintf(arq, "%s", node->symbol->text); break;
-    case AST_T_BOOL: fprintf(stderr, "AST_T_BOOL"); break;
-    case AST_T_CHAR: fprintf(stderr, "AST_T_CHAR"); break;
-    case AST_T_INT: fprintf(stderr, "AST_T_INT"); break;
-    case AST_T_POINTER: fprintf(stderr, "AST_T_POINTER"); break;
-    case AST_LITERAIS: fprintf(stderr, "AST_LITERAIS"); break;
-    case AST_VARIAVEL: fprintf(stderr, "AST_VARIAVEL"); break;
-    case AST_VARIAVEIS: fprintf(stderr, "AST_VARIAVEIS"); break;
-    case AST_VETOR_DECLARACAO_INIT: fprintf(stderr, "AST_VETOR_DECLARACAO_INIT"); break;
-    case AST_VETOR_DECLARACAO: fprintf(stderr, "AST_VETOR_DECLARACAO"); break;
-    case AST_LISTA_DECLARACAO: fprintf(stderr, "AST_LISTA_DECLARACAO"); break;
-    case AST_FUNCAO: fprintf(stderr, "AST_FUNCAO"); break;
-    case AST_FUNCAO_CABECALHO: fprintf(stderr, "AST_FUNCAO_CABECALHO"); break;
-    case AST_LISTA_PARAMETROS_DECLARACAO: fprintf(stderr, "AST_LISTA_PARAMETROS_DECLARACAO"); break;
-    case AST_LISTA_PARAMETROS_DECLARACAO_C: fprintf(stderr, "AST_LISTA_PARAMETROS_DECLARACAO_C"); break;
-    case AST_FUNCAO_CHAMADA: fprintf(stderr, "AST_FUNCAO_CHAMADA"); break;
-    case AST_LISTA_PARAMETROS: fprintf(stderr, "AST_LISTA_PARAMETROS"); break;
-    case AST_LISTA_PARAMETROS_CHAMADA_C: fprintf(stderr, "AST_LISTA_PARAMETROS_CHAMADA_C"); break;
-    case AST_BLOCO_COMANDOS: fprintf(stderr, "AST_BLOCO_COMANDOS"); break;
-    case AST_LISTA_COMANDOS: fprintf(stderr, "AST_LISTA_COMANDOS"); break;                
-    case AST_LISTA_COMANDOS_C: fprintf(stderr, "AST_LISTA_COMANDOS_C"); break;
-    case AST_PONTOVIRGULA: fprintf(stderr, "AST_PONTOVIRGULA"); break;
-    case AST_LEFT_ASSIGN: fprintf(stderr, "AST_LEFT_ASSIGN"); break;
-    case AST_RIGHT_ASSIGN: fprintf(stderr, "AST_RIGHT_ASSIGN"); break;
-    case AST_LEFT_ASSIGN_VECTOR: fprintf(stderr, "AST_LEFT_ASSIGN_VECTOR"); break;
-    case AST_RIGHT_ASSIGN_VECTOR: fprintf(stderr, "AST_RIGHT_ASSIGN_VECTOR"); break;
-    case AST_READ: fprintf(stderr, "AST_READ"); break;
-    case AST_PRINT: fprintf(stderr, "AST_PRINT"); break;
-    case AST_PRINT_ARG1: fprintf(stderr, "AST_PRINT_ARG1"); break;
-    case AST_PRINT_ARG2: fprintf(stderr, "AST_PRINT_ARG2"); break;
-    case AST_IF: fprintf(stderr, "AST_IF"); break;
-    case AST_IF_ELSE: fprintf(stderr, "AST_IF_ELSE"); break;
-    case AST_WHILE: fprintf(stderr, "AST_WHILE"); break;
-    case AST_VETOR: fprintf(stderr, "AST_VETOR"); break;
-    case AST_PARENTESES: fprintf(stderr, "AST_PARENTESES"); break;
-    case AST_OP_ADD: fprintf(stderr, "AST_OP_ADD"); break;
-    case AST_OP_MINUS: fprintf(stderr, "AST_OP_MINUS"); break;
-    case AST_OP_MULT: fprintf(stderr, "AST_OP_MULT"); break;
-    case AST_OP_DIV: fprintf(stderr, "AST_OP_DIV"); break;
-    case AST_OP_GR: fprintf(stderr, "AST_OP_GR"); break;
-    case AST_OP_LO: fprintf(stderr, "AST_OP_LO"); break;
-    case AST_OP_PIPE: fprintf(stderr, "AST_OP_PIPE"); break;
-    case AST_OP_AND: fprintf(stderr, "AST_OP_AND"); break;
-    case AST_OP_TIL: fprintf(stderr, "AST_OP_TIL"); break;
-    case AST_OP_DOLAR: fprintf(stderr, "AST_OP_DOLAR"); break;
-    case AST_OP_HASHTAG: fprintf(stderr, "AST_OP_HASHTAG"); break;
-    case AST_OP_LE: fprintf(stderr, "AST_OP_LE"); break;
-    case AST_OP_GE: fprintf(stderr, "AST_OP_GE"); break;
-    case AST_OP_EQ: fprintf(stderr, "AST_OP_EQ"); break;
-    case AST_OP_DIF: fprintf(stderr, "AST_OP_DIF"); break;
-    case AST_RETURN: fprintf(stderr, "AST_RETURN"); break;
-    case AST_VETOR_TAMANHO: fprintf(stderr, "AST_VETOR_TAMANHO"); break;
+    case AST_SYMBOL: 
+      fprintf(out_arq, "%s", node->symbol->text); 
+      break;
+    case AST_T_BOOL: 
+      fprintf(out_arq, "bool"); 
+      break;
+    case AST_T_CHAR: 
+      fprintf(out_arq, "char"); 
+      break;
+    case AST_T_INT: 
+      fprintf(out_arq, "int"); 
+      break;
+    case AST_T_POINTER: 
+      fprintf(out_arq, "pointer"); 
+      break;
+    case AST_LITERAIS: 
+      descompiladorAST(node->nodes[0]); 
+      fprintf(out_arq, " "); 
+      descompiladorAST(node->nodes[1]); 
+      break;
+    case AST_VARIAVEL: 
+      descompiladorAST(node->nodes[0]); 
+      fprintf(out_arq, " %s", node->symbol->text); 
+      break;
+    case AST_VARIAVEIS: 
+      descompiladorAST(node->nodes[0]); 
+      fprintf(out_arq, " : "); 
+      descompiladorAST(node->nodes[1]); 
+      fprintf(out_arq, ";\n"); 
+      break;
+    case AST_VETOR_DECLARACAO_INIT: 
+      descompiladorAST(node->nodes[0]); 
+      fprintf(out_arq, "["); 
+      descompiladorAST(node->nodes[1]); 
+      fprintf(out_arq, "] %s : ", node->symbol->text); 
+      descompiladorAST(node->nodes[2]); 
+      fprintf(out_arq, ";\n"); 
+      break;
+    case AST_VETOR_DECLARACAO: 
+      descompiladorAST(node->nodes[0]); 
+      fprintf(out_arq, "["); 
+      descompiladorAST(node->nodes[1]); 
+      fprintf(out_arq, "] %s ;\n", node->symbol->text); 
+      break;
+    case AST_LISTA_DECLARACAO: 
+      descompiladorAST(node->nodes[0]); 
+      descompiladorAST(node->nodes[1]); 
+      break;
+    case AST_FUNCAO: 
+      descompiladorAST(node->nodes[0]); 
+      descompiladorAST(node->nodes[1]); 
+      fprintf(out_arq, ";\n"); 
+      break;
+    case AST_FUNCAO_CABECALHO: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " %s (", node->symbol->text);
+      descompiladorAST(node->nodes[1]);
+      fprintf(out_arq, ") ");
+      break;
+    case AST_LISTA_PARAMETROS_DECLARACAO: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " %s", node->symbol->text);
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_LISTA_PARAMETROS_DECLARACAO_C: 
+      fprintf(out_arq, ", ");
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " %s", node->symbol->text);
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_FUNCAO_CHAMADA: 
+      fprintf(out_arq, "%s(", node->symbol->text);
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, ")");
+      break;
+    case AST_LISTA_PARAMETROS: 
+      descompiladorAST(node->nodes[0]);
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_LISTA_PARAMETROS_CHAMADA_C:
+      fprintf(out_arq, ", ");
+      descompiladorAST(node->nodes[0]);
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_BLOCO_COMANDOS:
+      fprintf(out_arq, "{\n");
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, "\n}");
+    break;
+    case AST_LISTA_COMANDOS: 
+      fprintf(out_arq, "  ");
+      descompiladorAST(node->nodes[0]);
+      descompiladorAST(node->nodes[1]);
+      break;                
+    case AST_LISTA_COMANDOS_C: 
+      fprintf(out_arq, ";\n  ");
+      descompiladorAST(node->nodes[0]);
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_PONTOVIRGULA: 
+      fprintf(out_arq, ";");
+      break;
+    case AST_LEFT_ASSIGN: 
+      fprintf(out_arq, "%s <- ", node->symbol->text);
+      descompiladorAST(node->nodes[0]);
+      break;
+    case AST_RIGHT_ASSIGN:
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " -> %s", node->symbol->text);
+      break;
+    case AST_LEFT_ASSIGN_VECTOR: 
+      fprintf(out_arq, "%s[", node->symbol->text);
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, "] <- ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_RIGHT_ASSIGN_VECTOR: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " -> %s[", node->symbol->text);
+      descompiladorAST(node->nodes[1]);
+      fprintf(out_arq, "]");
+      break;
+    case AST_READ: 
+      fprintf(out_arq, "read %s", node->symbol->text); 
+      break;
+    case AST_PRINT: 
+      fprintf(out_arq, "print ");
+      descompiladorAST(node->nodes[0]);
+      break;
+    case AST_RETURN: 
+      fprintf(out_arq, "return ");
+      descompiladorAST(node->nodes[0]); 
+      break;
+    case AST_PRINT_ARG1: 
+    case AST_PRINT_ARG2:
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, ", ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_IF: 
+      fprintf(out_arq, "if (");
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, ") then ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_IF_ELSE: 
+      fprintf(out_arq, "if (");
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, ") then ");
+      descompiladorAST(node->nodes[1]);
+      fprintf(out_arq, " else ");
+      descompiladorAST(node->nodes[2]);
+      break;
+    case AST_WHILE: 
+      fprintf(out_arq, "while (");
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, ") ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_VETOR: 
+      fprintf(out_arq, "%s [", node->symbol->text);
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, "]");
+      break;
+    case AST_PARENTESES: 
+      fprintf(out_arq, "(");
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, ")");
+      break;
+    case AST_OP_ADD: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " + ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_MINUS: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " - ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_MULT: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " * ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_DIV: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " / ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_LO: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " < ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_GR: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " > ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_PIPE: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " | ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_AND: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " & ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_TIL:
+      fprintf(out_arq, " ~");
+      descompiladorAST(node->nodes[0]);
+      break;
+    case AST_OP_DOLAR: 
+      fprintf(out_arq, " $");
+      descompiladorAST(node->nodes[0]);
+      break;
+    case AST_OP_HASHTAG: 
+      fprintf(out_arq, " #");
+      descompiladorAST(node->nodes[0]);
+      break;
+    case AST_OP_LE: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " <= ");
+      descompiladorAST(node->nodes[1]); 
+      break;
+    case AST_OP_GE: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " >= ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_EQ:
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " == ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_OP_DIF: 
+      descompiladorAST(node->nodes[0]);
+      fprintf(out_arq, " != ");
+      descompiladorAST(node->nodes[1]);
+      break;
+    case AST_VETOR_TAMANHO: fprintf(out_arq, "%s", node->symbol->text); break;
 
     default: break;
   }
-  
-  fprintf(arq, "chegou aqui dsadasdsadase novo");
-  //astPrint(node, 0);
 }

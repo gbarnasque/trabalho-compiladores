@@ -57,8 +57,8 @@
 "<-"          {return LEFT_ASSIGN;}
 "->"          {return RIGHT_ASSIGN;}
 
-"true"        {return LIT_TRUE;}
-"false"       {return LIT_FALSE;}
+"true"        {yylval.symbol = hashInsert(SYMBOL_LIT_TRUE, yytext); return LIT_TRUE;}
+"false"       {yylval.symbol = hashInsert(SYMBOL_LIT_FALSE, yytext); return LIT_FALSE;}
 [0-9]+        {yylval.symbol = hashInsert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER;}
 
 
