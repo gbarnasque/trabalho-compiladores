@@ -62,11 +62,11 @@
 [0-9]+        {yylval.symbol = hashInsert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER;}
 
 
-[-,;:()\[\]{}+*/<>|&~$#] {return yytext[0];}
+[-,;:()\[\]{}+*/<>|&~$#]    {return yytext[0];}
 [_a-zA-Z][_0-9a-zA-Z]*      {yylval.symbol = hashInsert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 
-'[^']*'                     {hashInsert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR;}
-\"((\\\")*[^\"]*)*\"        {hashInsert(SYMBOL_LIT_STRING, yytext); return LIT_STRING;}
+'[^']*'                     {yylval.symbol = hashInsert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR;}
+\"((\\\")*[^\"]*)*\"        {yylval.symbol = hashInsert(SYMBOL_LIT_STRING, yytext); return LIT_STRING;}
 
 "\n"          { ++lineNumber;}
 [ \t] 

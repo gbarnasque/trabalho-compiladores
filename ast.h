@@ -7,15 +7,9 @@
 
 #include <stdio.h>
 #include "hash.h"
+#include "astdefines.h"
 
 #define MAX_SONS 4 
-
-#define AST_SYMBOL 1
-#define AST_ADD 2
-#define AST_SUB 2
-#define AST_MULT 4
-#define AST_DIV 5
-
 
 typedef struct ast_node {
     int type;
@@ -25,5 +19,6 @@ typedef struct ast_node {
 
 AstNode* astCreate(int, HashNode*, AstNode*, AstNode*, AstNode*, AstNode*);
 void astPrint(AstNode*, int);
+void printNodeType(int);
 
 #endif
