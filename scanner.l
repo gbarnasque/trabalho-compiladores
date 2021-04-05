@@ -6,8 +6,9 @@
 
   #include <stdlib.h>
   #include <stdio.h>
-  #include "y.tab.h"
   #include "hash.h"
+  #include "ast.h"
+  #include "y.tab.h"
 
   #define SYMBOL_LIT_INT    1
   #define SYMBOL_LIT_CHAR   2
@@ -56,17 +57,16 @@
 "<-"          {return LEFT_ASSIGN;}
 "->"          {return RIGHT_ASSIGN;}
 
-"true"        {return LIT_TRUE;}
-"false"       {return LIT_FALSE;}
-[0-9]+        {hashInsert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER;}
+"true"        {yylval.symbol = hashInsert(SYMBOL_LIT_TRUE, yytext); return LIT_TRUE;}
+"false"       {yylval.symbol = hashInsert(SYMBOL_LIT_FALSE, yytext); return LIT_FALSE;}
+[0-9]+        {yylval.symbol = hashInsert(SYMBOL_LIT_INT, yytext); return LIT_INTEGER;}
 
 
+[-,;:()\[\]{}+*/<>|&~$#]    {return yytext[0];}
+[_a-zA-Z][_0-9a-zA-Z]*      {yylval.symbol = hashInsert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 
-[-,;:()\[\]{}+*/<>|&~$#] {return yytext[0];}
-[_a-zA-Z][_0-9a-zA-Z]*      {hashInsert(SYMBOL_IDENTIFIER, yytext); return TK_IDENTIFIER;}
-
-'[^']*'       {hashInsert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR;}
-\"((\\\")*[^\"]*)*\"        {hashInsert(SYMBOL_LIT_STRING, yytext); return LIT_STRING;}
+'[^']*'                     {yylval.symbol = hashInsert(SYMBOL_LIT_CHAR, yytext); return LIT_CHAR;}
+\"((\\\")*[^\"]*)*\"        {yylval.symbol = hashInsert(SYMBOL_LIT_STRING, yytext); return LIT_STRING;}
 
 "\n"          { ++lineNumber;}
 [ \t] 
@@ -83,6 +83,7 @@
 
 #include "y.tab.c"
 #include "hash.c"
+#include "ast.c"
 #include "main.c"
 
 int yywrap() {
