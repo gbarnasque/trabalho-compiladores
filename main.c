@@ -8,9 +8,10 @@ FILE* out_arq;
 void descompiladorAST(AstNode*);
 
 int main(int argc, char** argv) {
-  
+  int semanticErrors = 0;
+
   if(argc < 3) {
-    fprintf(stderr, "Call: ./etapa3 file_in_name file_out_name\n");
+    fprintf(stderr, "Call: ./etapa4 file_in_name file_out_name\n");
     exit(1);
   }  
 
@@ -31,12 +32,18 @@ int main(int argc, char** argv) {
     exit(2);
   }
 
+  semanticErrors = getSemanticErrors();
+  if(semanticErrors > 0){
+    fprintf(stderr,"\x1b[31m Program has %d semantic errors!\n \x1b[0m", semanticErrors);
+    exit(4);
+  }
+
   descompiladorAST(astFinal);
   //descompiladorAST(NULL);
 
-  printf("File has %d lines\n", getLineNumber());
-  //printHashTable();
-  printf("Compilation successful!\n");
+  fprintf(stderr, "File has %d lines\n", getLineNumber());
+  printHashTable();
+  fprintf(stderr, "Compilation successful!\n");
 
   exit(0);
 }

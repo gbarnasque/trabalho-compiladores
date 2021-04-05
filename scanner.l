@@ -8,15 +8,8 @@
   #include <stdio.h>
   #include "hash.h"
   #include "ast.h"
+  #include "semantic.h"
   #include "y.tab.h"
-
-  #define SYMBOL_LIT_INT    1
-  #define SYMBOL_LIT_CHAR   2
-  #define SYMBOL_LIT_STRING 3
-  #define SYMBOL_LIT_TRUE   4
-  #define SYMBOL_LIT_FALSE  5
-  #define SYMBOL_IDENTIFIER 6
-
 
   int running = 1;
   int lineNumber = 1;
@@ -84,6 +77,7 @@
 #include "y.tab.c"
 #include "hash.c"
 #include "ast.c"
+#include "semantic.c"
 #include "main.c"
 
 int yywrap() {

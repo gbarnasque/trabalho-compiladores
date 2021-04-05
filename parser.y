@@ -86,7 +86,13 @@
 %%
 
 // regras
-programa: l_declaracao { $$ = $1; astFinal = $$; astPrint(astFinal, 0);}
+programa: l_declaracao { 
+                        $$ = $1; 
+                        astFinal = $$; 
+                        astPrint(astFinal, 0); 
+                        checkAndSetDeclarations(astFinal); 
+                        checkUndeclared(); 
+                        }
     ;
 
 tipo: KW_BOOL       { $$ = astCreate(AST_T_BOOL, NULL, NULL, NULL, NULL, NULL); }

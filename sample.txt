@@ -1,7 +1,7 @@
 // UFRGS - Compiladores - Marcelo Johann - 2020/2
 
 bool bl: false;
-
+int bl: 2;
 char c :'x';
 int a :  'A';
 int i :  0;
