@@ -45,7 +45,6 @@ void checkAndSetDeclarations(AstNode* node) {
                 node->symbol->type = SYMBOL_FUNCTION;
                 setDataType(node);
             }
-            
             break;
 
         default: 
@@ -64,23 +63,23 @@ int getSemanticErrors() {
     return SemanticErrors;
 }
 void setDataType(AstNode* node) {
-    switch (node->nodes[0]->type)
-    {
-    case AST_T_BOOL:
-        node->symbol->dataType = DATATYPE_BOOL;
-        break;
-    case AST_T_CHAR:
-        node->symbol->dataType = DATATYPE_CHAR;
-        break;
-    case AST_T_INT:
-        node->symbol->dataType = DATATYPE_INT;
-        break;
-    case AST_T_POINTER:
-        node->symbol->dataType = DATATYPE_POINTER;
-        break;
-    
-    default:
-        break;
+    if(node->nodes[0] != NULL) {
+        switch (node->nodes[0]->type)
+        {
+            case AST_T_BOOL:
+                node->symbol->dataType = DATATYPE_BOOL;
+                break;
+            case AST_T_CHAR:
+                node->symbol->dataType = DATATYPE_CHAR;
+                break;
+            case AST_T_INT:
+                node->symbol->dataType = DATATYPE_INT;
+                break;
+            case AST_T_POINTER:
+                node->symbol->dataType = DATATYPE_POINTER;
+                break;
+            default:
+                break;
+        }
     }
-    
 }

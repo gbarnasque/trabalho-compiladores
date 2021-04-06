@@ -63,7 +63,7 @@ void printHashTable() {
     for(i=0; i<HASH_SIZE; i++) {
         node = hashTable[i];
         while(node != NULL) {
-            fprintf(stderr, "Tabela[%d] has %s %s with content: %s \n", i, getSymbolText(node->type), getDatatypeText(node->dataType), node->text);
+            fprintf(stderr, "Tabela[%d] has %s, type: %s, datatype: %s \n", i, node->text, getSymbolText(node->type), getDatatypeText(node->dataType));
             node = node->next;
         }
     }
