@@ -112,8 +112,8 @@ char* getSymbolText(int s) {
     }
     return "";
 }
-char* getDatatypeText(int s) {
-    switch (s)
+char* getDatatypeText(int dt) {
+    switch (dt)
     {
         case DATATYPE_INT:
             return "DATATYPE_INT";

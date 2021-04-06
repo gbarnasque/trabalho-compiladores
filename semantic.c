@@ -55,6 +55,73 @@ void checkAndSetDeclarations(AstNode* node) {
         checkAndSetDeclarations(node->nodes[i]);
 }
 
+void checkOperands(AstNode* node) {
+    int i;
+    if(node == NULL)
+        return;
+
+    switch(node->type) {
+        case AST_OP_ADD:
+        case AST_OP_MINUS:
+        case AST_OP_MULT:
+        case AST_OP_DIV:
+            if(isIntegerOperand(node->nodes[0]) == 0)  {
+                fprintf(stderr, "Semantic ERROR: invalid left operand for ADD\n");
+                ++SemanticErrors;
+            }
+            if(isIntegerOperand(node->nodes[1]) == 0) {
+                fprintf(stderr, "Semantic ERROR: invalid right operand for ADD\n");
+                ++SemanticErrors;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    for(i=0; i<MAX_SONS; i++)
+        checkOperands(node->nodes[i]);
+}
+
+int isIntegerOperand(AstNode* node) {
+    int ret = 0;
+    int type = node->type;
+    if(node == NULL)
+        return ret;
+    if(
+        type == AST_OP_ADD || 
+        type == AST_OP_MINUS ||
+        type == AST_OP_MULT ||
+        type == AST_OP_DIV ||
+        (type == AST_SYMBOL && node->symbol->type == SYMBOL_LIT_INT) ||
+        (type == AST_FUNCAO_CHAMADA && node->symbol->dataType == DATATYPE_INT) ||
+        (type == AST_VETOR && node->symbol->dataType == DATATYPE_INT) ||
+        (type == AST_SYMBOL && node->symbol->dataType == DATATYPE_INT)
+        )
+        ret = 1;
+
+    return ret;
+}
+
+int isCharOperand(AstNode* node) {
+    int ret = 0;
+    int type = node->type;
+
+
+    return ret;
+}
+
+int isBoolOperand(AstNode* node) {
+    int ret = 0;
+
+    return ret;
+}
+int isPointerOperand(AstNode* node) {
+    int ret = 0;
+
+    return ret;
+}
+
 void checkUndeclared() {
     SemanticErrors += hashCheckUndeclared();
 }

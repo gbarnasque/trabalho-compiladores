@@ -91,7 +91,8 @@ programa: l_declaracao {
                         astFinal = $$; 
                         astPrint(astFinal, 0); 
                         checkAndSetDeclarations(astFinal); 
-                        checkUndeclared(); 
+                        checkUndeclared();
+                        checkOperands(astFinal);
                         }
     ;
 

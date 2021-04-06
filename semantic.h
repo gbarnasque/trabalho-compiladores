@@ -10,7 +10,13 @@ extern int SemanticErrors;
 
 void checkAndSetDeclarations(AstNode*);
 void checkUndeclared();
+void checkOperands(AstNode*);
 int getSemanticErrors();
+
+int isIntegerOperand(AstNode*);
+int isCharOperand(AstNode*);
+int isBoolOperand(AstNode*);
+int isPointerOperand(AstNode*);
 void setDataType(AstNode*);
 
 #endif
