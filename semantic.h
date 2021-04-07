@@ -19,4 +19,6 @@ int isBoolOperand(AstNode*);
 int isPointerOperand(AstNode*);
 void setDataType(AstNode*);
 
+void checkAndSetIdentifier(AstNode*, int);
+
 #endif

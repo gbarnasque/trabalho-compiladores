@@ -13,38 +13,19 @@ void checkAndSetDeclarations(AstNode* node) {
     if(node == NULL)
         return;
 
+
     switch(node->type) {
         case AST_VETOR_DECLARACAO_INIT:
         case AST_VETOR_DECLARACAO:
-            if(node->symbol != NULL) {
-                if(node->symbol->type != SYMBOL_IDENTIFIER) {
-                    fprintf(stderr, "Semantic ERROR: identifier %s already declared.\n", node->symbol->text);
-                    ++SemanticErrors;
-                }
-
-                node->symbol->type = SYMBOL_VECTOR;
-                setDataType(node);
-            }
+            checkAndSetIdentifier(node, SYMBOL_VECTOR);
             break;
         case AST_VARIAVEL:
-            if(node->symbol != NULL) {
-                if(node->symbol->type != SYMBOL_IDENTIFIER) {
-                    fprintf(stderr, "Semantic ERROR: identifier %s already declared.\n", node->symbol->text);
-                    ++SemanticErrors;
-                }
-                node->symbol->type = SYMBOL_VARIABLE;
-                setDataType(node);
-            }
+        case AST_LISTA_PARAMETROS_DECLARACAO:
+        case AST_LISTA_PARAMETROS_DECLARACAO_C:
+            checkAndSetIdentifier(node, SYMBOL_VARIABLE);
             break;
         case AST_FUNCAO_CABECALHO:
-            if(node->symbol != NULL) {
-                if(node->symbol->type != SYMBOL_IDENTIFIER) {
-                    fprintf(stderr, "Semantic ERROR: redeclaration of identifier %s\n", node->symbol->text);
-                    ++SemanticErrors;
-                }
-                node->symbol->type = SYMBOL_FUNCTION;
-                setDataType(node);
-            }
+            checkAndSetIdentifier(node, SYMBOL_FUNCTION);
             break;
 
         default: 
@@ -53,6 +34,17 @@ void checkAndSetDeclarations(AstNode* node) {
 
     for(i=0; i<MAX_SONS; i++)
         checkAndSetDeclarations(node->nodes[i]);
+}
+
+void checkAndSetIdentifier(AstNode* node, int type) {
+    if(node->symbol != NULL) {
+        if(node->symbol->type != SYMBOL_IDENTIFIER) {
+            fprintf(stderr, "[S01] Semantic ERROR: identifier %s already declared\n", node->symbol->text);
+            ++SemanticErrors;
+        }
+        node->symbol->type = type;
+        setDataType(node);
+    }
 }
 
 void checkOperands(AstNode* node) {
@@ -66,11 +58,11 @@ void checkOperands(AstNode* node) {
         case AST_OP_MULT:
         case AST_OP_DIV:
             if(isIntegerOperand(node->nodes[0]) == 0)  {
-                fprintf(stderr, "Semantic ERROR: invalid left operand for ADD\n");
+                fprintf(stderr, "[S03] Semantic ERRORS: invalid left operand: %s\n", node->nodes[0]->symbol->text);
                 ++SemanticErrors;
             }
             if(isIntegerOperand(node->nodes[1]) == 0) {
-                fprintf(stderr, "Semantic ERROR: invalid right operand for ADD\n");
+                fprintf(stderr, "[S04] Semantic ERROR: invalid right operand: %s\n", node->nodes[1]->symbol->text);
                 ++SemanticErrors;
             }
             break;
@@ -85,20 +77,26 @@ void checkOperands(AstNode* node) {
 
 int isIntegerOperand(AstNode* node) {
     int ret = 0;
-    int type = node->type;
+    int type;
     if(node == NULL)
         return ret;
-    if(
-        type == AST_OP_ADD || 
+
+    type = node->type;
+    if( type == AST_OP_ADD || 
         type == AST_OP_MINUS ||
         type == AST_OP_MULT ||
-        type == AST_OP_DIV ||
+        type == AST_OP_DIV
+        )
+        ret = 1;
+
+    if(node->symbol != NULL && (
         (type == AST_SYMBOL && node->symbol->type == SYMBOL_LIT_INT) ||
         (type == AST_FUNCAO_CHAMADA && node->symbol->dataType == DATATYPE_INT) ||
         (type == AST_VETOR && node->symbol->dataType == DATATYPE_INT) ||
         (type == AST_SYMBOL && node->symbol->dataType == DATATYPE_INT)
-        )
+        ))
         ret = 1;
+        
 
     return ret;
 }

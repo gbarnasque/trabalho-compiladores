@@ -77,7 +77,7 @@ int hashCheckUndeclared() {
         node = hashTable[i];
         while(node != NULL) {
             if(node->type == SYMBOL_IDENTIFIER) {
-                fprintf(stderr, "Semantic ERROR: identifier %s undeclared\n", node->text);
+                fprintf(stderr, "[S02] Semantic ERROR: identifier %s not declared\n", node->text);
                 ++undeclared;
             }
             node = node->next;

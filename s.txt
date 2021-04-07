@@ -1,16 +1,20 @@
-bool bl : false;
-int bl : 2;
+bool bf : false;
+bool bt : true;
 char c : 'x';
 int a : 'A';
 int i : 0;
 int[10] v : 0 0 0 0 0 0 0 0 0 0 ;
 int[10] mat ;
 pointer p : 'a';
-bool test (int com, bool c, pointer ahga) {
+bool test (int com, bool b, pointer ahga) {
+
+};
+
+int t(int h) {
 
 };
 
 int main () {
-  a <- 5 + 3 + p + i + bl;
+  a <- 5 / 3 + v[2] - i * t(a);
 };
   
