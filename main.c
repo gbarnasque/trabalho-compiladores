@@ -38,8 +38,8 @@ int main(int argc, char** argv) {
     //exit(4);
   //}
 
-  descompiladorAST(astFinal);
-  //descompiladorAST(NULL);
+  //descompiladorAST(astFinal);
+  
 
   fprintf(stderr, "File has %d lines\n", getLineNumber());
   printHashTable();

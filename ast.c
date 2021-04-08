@@ -8,12 +8,13 @@ AstNode* astCreate(int type, HashNode* symbol, AstNode* s0, AstNode* s1, AstNode
     AstNode* ret;
     ret = (AstNode*) malloc(sizeof(AstNode));
     ret->type = type;
+    ret->dataType = 0;
     ret->symbol = symbol;
     ret->nodes[0] = s0;
     ret->nodes[1] = s1;
     ret->nodes[2] = s2;
     ret->nodes[3] = s3;
-
+    ret->lineNumber = getLineNumber();
     return ret;
 }
 
@@ -29,10 +30,12 @@ void astPrint(AstNode* node, int level) {
     printNodeType(node->type);
 
     if(node->symbol != NULL)
-        fprintf(stderr, ",%s\n", node->symbol->text);
+        fprintf(stderr, ", %s", node->symbol->text);
     else 
-        fprintf(stderr, ",''\n");
+        fprintf(stderr, ", ''");
     
+    printNodeDataType(node->dataType);
+
     for(i=0; i<MAX_SONS; i++)
         astPrint(node->nodes[i], level+1);
     //fprintf(stderr, ")\n");
@@ -97,5 +100,16 @@ void printNodeType(int type) {
         default:
             fprintf(stderr, "AST_UNKNOW");
             break;
+    }
+}
+
+void printNodeDataType(int datatype) {
+    switch (datatype)
+    {
+    case AST_DATATYPE_BOOL: fprintf(stderr, ", AST_DATATYPE_BOOL\n"); break;
+    case AST_DATATYPE_INT: fprintf(stderr, ", AST_DATATYPE_INT\n"); break;
+    case AST_DATATYPE_CHAR: fprintf(stderr, ", AST_DATATYPE_CHAR\n"); break;
+    case AST_DATATYPE_POINTER: fprintf(stderr, ", AST_DATATYPE_POINTER\n"); break;
+    default: fprintf(stderr, ", ''\n"); break;
     }
 }

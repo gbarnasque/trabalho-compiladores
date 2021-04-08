@@ -53,6 +53,7 @@ HashNode* hashInsert(int type, char* text) {
     strcpy(ret->text, text);
     ret->next = hashTable[address];
     ret->dataType = 0;
+    ret->numParameters = 0;
     hashTable[address] = ret;
     return ret;
 }

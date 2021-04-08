@@ -90,9 +90,7 @@ programa: l_declaracao {
                         $$ = $1; 
                         astFinal = $$; 
                         astPrint(astFinal, 0); 
-                        checkAndSetDeclarations(astFinal); 
-                        checkUndeclared();
-                        checkOperands(astFinal);
+                        semanticVerification(astFinal);
                         }
     ;
 

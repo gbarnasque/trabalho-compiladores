@@ -13,6 +13,8 @@
 
 typedef struct ast_node {
     int type;
+    int dataType;
+    int lineNumber;
     struct ast_node* nodes[MAX_SONS];
     HashNode* symbol;
 } AstNode;
@@ -20,5 +22,6 @@ typedef struct ast_node {
 AstNode* astCreate(int, HashNode*, AstNode*, AstNode*, AstNode*, AstNode*);
 void astPrint(AstNode*, int);
 void printNodeType(int);
+void printNodeDataType(int);
 
 #endif

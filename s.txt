@@ -15,6 +15,6 @@ int t(int h) {
 };
 
 int main () {
-  a <- 5 / 3 + v[2] - i * t(a);
+  a <- 5 / 3 * t(a) + (v[2] - i) + c;
 };
   

@@ -29,6 +29,7 @@ typedef struct hash_node {
     int dataType;
     char* text;
     struct hash_node* next;
+    int numParameters;
 } HashNode;
 
 void hashInit();
