@@ -19,15 +19,16 @@ void checkUndeclared();
 void checkOperands(AstNode*);
 int getSemanticErrors();
 
-void checkVector(AstNode*);
-void checkFunc(AstNode*);
+void checkFuncReturn(AstNode*);
 
 int countParametersFunction(AstNode*);
 int isIntegerOperand(AstNode*);
 int isCharOperand(AstNode*);
 int isBoolOperand(AstNode*);
 int isPointerOperand(AstNode*);
+int hasSymbolIdentifier(AstNode*);
 void setDataTypes(AstNode*);
+int getSymbolDataTypeAsASTDataType(HashNode*);
 
 void checkAndSetIdentifier(AstNode*, int);
 

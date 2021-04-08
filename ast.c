@@ -110,6 +110,8 @@ void printNodeDataType(int datatype) {
     case AST_DATATYPE_INT: fprintf(stderr, ", AST_DATATYPE_INT\n"); break;
     case AST_DATATYPE_CHAR: fprintf(stderr, ", AST_DATATYPE_CHAR\n"); break;
     case AST_DATATYPE_POINTER: fprintf(stderr, ", AST_DATATYPE_POINTER\n"); break;
+    case AST_DATATYPE_STRING: fprintf(stderr, ", AST_DATATYPE_STRING\n"); break;
+    case AST_DATATYPE_UNKNOWN: fprintf(stderr, ", AST_DATATYPE_UNKNOWN\n"); break;
     default: fprintf(stderr, ", ''\n"); break;
     }
 }

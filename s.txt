@@ -6,15 +6,22 @@ int i : 0;
 int[10] v : 0 0 0 0 0 0 0 0 0 0 ;
 int[10] mat ;
 pointer p : 'a';
-bool test (int com, bool b, pointer ahga) {
 
+bool test (int com, bool b, pointer ahga) {
+  print "teste";
+  read a;
 };
 
 int t(int h) {
-
+  return 42;
 };
 
 int main () {
   a <- 5 / 3 * t(a) + (v[2] - i) + c;
+  bf <- 5 > 3;
+  a -> v[2];
+  v[3] <- mat[3];
+  p <- p + 2 + a;
+  p + 3 + 'a' -> p;
 };
   

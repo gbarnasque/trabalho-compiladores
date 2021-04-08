@@ -14,17 +14,26 @@ void semanticVerification(AstNode* node) {
     printf("Start SetDeclarations\n");
     checkAndSetDeclarations(node); 
     printf("End SetDeclarations\n");
+
     printf("Start setBaseDataTypes\n");
     setBaseDataTypes(node);
     printf("End setBaseDataTypes\n");
+
     printf("Start checkUndeclared\n");
     checkUndeclared();
     printf("End checkUndeclared\n");
+
+    printf("Start fillDataTypes\n");
+    fillDataTypes(node);
+    printf("End fillDataTypes\n");
+
     printf("Start checkOperands\n");
-    astPrint(node, 0);
-    //propagateDataTypes(node);
     checkOperands(node);
     printf("End checkOperands\n");
+
+    printf("Start checkFuncReturn");
+    checkFuncReturn(node);
+    printf("End checkFuncReturn");
 
     fprintf(stderr, "End Semantic Verification\n");
     fprintf(stderr, "---------------------\n");
@@ -52,6 +61,7 @@ void setBaseDataTypes(AstNode* node) {
                 break;
             case SYMBOL_LIT_STRING:
                 node->dataType = AST_DATATYPE_STRING;
+                break;
             default:
                 setDataTypeBasedOnSymbolDataType(node);
                 break;
@@ -63,6 +73,9 @@ void setBaseDataTypes(AstNode* node) {
         setDataTypeBasedOnSymbolDataType(node);
 }
 void setDataTypeBasedOnSymbolDataType(AstNode* node) {
+    if(node->symbol == NULL) {
+        node->dataType = AST_DATATYPE_ERROR;
+    }
     switch (node->symbol->dataType) {
         case DATATYPE_CHAR:
             node->dataType = AST_DATATYPE_CHAR;
@@ -130,7 +143,6 @@ void checkOperands(AstNode* node) {
     int i;
     //printf("aqui null\n");
 
-
     if(node == NULL)
         return;
     
@@ -142,9 +154,13 @@ void checkOperands(AstNode* node) {
         // Integer or Chars
         case AST_OP_ADD:
         case AST_OP_MINUS:
+            if( ((node->nodes[0]->symbol != NULL) && ((isPointerOperand(node->nodes[1]) == 1) && (node->nodes[0]->symbol->type == SYMBOL_LIT_INT || node->nodes[0]->symbol->type == SYMBOL_LIT_CHAR))) || 
+                ((node->nodes[1]->symbol != NULL) && ((isPointerOperand(node->nodes[0]) == 1) && (node->nodes[1]->symbol->type == SYMBOL_LIT_INT || node->nodes[1]->symbol->type == SYMBOL_LIT_CHAR)))) {
+                node->dataType = AST_DATATYPE_POINTER;
+                return;
+                }
         case AST_OP_MULT:
         case AST_OP_DIV:
-        case AST_OP_DIF:
             //printf("\n%d %d %d %d\n", isIntegerOperand(node->nodes[0]), isCharOperand(node->nodes[0]), isIntegerOperand(node->nodes[1]), isCharOperand(node->nodes[1]));
             if(isIntegerOperand(node->nodes[0]) == 0 && isCharOperand(node->nodes[0]) == 0)  {
                 fprintf(stderr, "[S03] Semantic ERRORS: invalid Left operand at Line %d\n", node->lineNumber);
@@ -156,15 +172,28 @@ void checkOperands(AstNode* node) {
             }
             node->dataType = AST_DATATYPE_INT;
             break;
-
-        // Booleans
-        case AST_OP_AND:
-        case AST_OP_PIPE:
+        
         case AST_OP_EQ:
         case AST_OP_GE:
         case AST_OP_LE:
         case AST_OP_GR:
         case AST_OP_LO:
+        case AST_OP_DIF:
+            if(isIntegerOperand(node->nodes[0]) == 0 && isCharOperand(node->nodes[0]) == 0)  {
+                fprintf(stderr, "[S12] Semantic ERRORS: invalid Left operand at Line %d\n", node->lineNumber);
+                ++SemanticErrors;
+            }
+            if(isIntegerOperand(node->nodes[1]) == 0 && isCharOperand(node->nodes[1]) == 0) {
+                fprintf(stderr, "[S13] Semantic ERROR: invalid Right operand at Line %d\n", node->lineNumber);
+                ++SemanticErrors;
+            }
+            node->dataType = AST_DATATYPE_BOOL;
+            break;
+
+        // Booleans
+        case AST_OP_AND:
+        case AST_OP_PIPE:
+        
             if(isBoolOperand(node->nodes[0]) == 0)  {
                 fprintf(stderr, "[S05] Semantic ERRORS: invalid Left operand at Line %d\n", node->lineNumber);
                 ++SemanticErrors;
@@ -174,6 +203,7 @@ void checkOperands(AstNode* node) {
                 ++SemanticErrors;
             }
             break;
+
         case AST_OP_TIL:
             if(isBoolOperand(node->nodes[0]) == 0)  {
                 fprintf(stderr, "[S07] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
@@ -188,29 +218,130 @@ void checkOperands(AstNode* node) {
                 fprintf(stderr, "[S08] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
                 ++SemanticErrors;
             }
+            node->dataType = AST_DATATYPE_UNKNOWN;
+            break;
 
         // Pointers
         case AST_OP_DOLAR:
-        case AST_OP_HASHTAG:
-            if(isPointerOperand(node->nodes[0]) == 0) {
+            if(hasSymbolIdentifier(node->nodes[0]) == 0) {
                 fprintf(stderr, "[S09] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
                 ++SemanticErrors;
             }
+            node->dataType = AST_DATATYPE_POINTER;
+            break;
+        case AST_OP_HASHTAG:
+            if(isPointerOperand(node->nodes[0]) == 0) {
+                fprintf(stderr, "[S10] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            }
+            node->dataType = AST_DATATYPE_INT;
             break;
 
         // Demais
+        case AST_PARENTESES:
+            node->dataType = node->nodes[0]->dataType;
+            break;
 
+        case AST_VETOR:
+            if(isIntegerOperand(node->nodes[0]) == 0 && isCharOperand(node->nodes[0]) == 0){
+                fprintf(stderr, "[S11] Semantic ERRORS: invalid index of vector at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            }
+            setDataTypeBasedOnSymbolDataType(node);
+            break;
+    
+
+        case AST_RETURN:
+            node->dataType = node->nodes[0]->dataType;
+            break;
+        
+        case AST_PRINT_ARG1:
+        case AST_PRINT_ARG2:
+            node->dataType = AST_DATATYPE_STRING;
+            break;
 
         case AST_PRINT:
-            
+            if((node->symbol != NULL && node->symbol->dataType != SYMBOL_LIT_STRING) || (node->nodes[0] != NULL && node->nodes[0]->dataType != AST_DATATYPE_STRING)) {
+                fprintf(stderr, "[S14] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            }
+            node->dataType = AST_DATATYPE_UNKNOWN;
+            break;
+        
+        case AST_READ:
+            if(hasSymbolIdentifier(node) == 0) {
+                fprintf(stderr, "[S15] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            }
+            node->dataType = AST_DATATYPE_UNKNOWN;
+            break;
+
+        // Assigns
+        case AST_RIGHT_ASSIGN_VECTOR: 
+            if( ((isIntegerOperand(node->nodes[1]) == 0) && (isCharOperand(node->nodes[1]) == 0)) ||
+                (getSymbolDataTypeAsASTDataType(node->symbol) != node->nodes[0]->dataType)
+            ) {
+                fprintf(stderr, "[S16] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            } 
+            node->dataType = AST_DATATYPE_UNKNOWN;
+            break;
+
+        case AST_LEFT_ASSIGN_VECTOR:
+            if( ((isIntegerOperand(node->nodes[0]) == 0) && (isCharOperand(node->nodes[0]) == 0)) ||
+                (getSymbolDataTypeAsASTDataType(node->symbol) != node->nodes[1]->dataType)
+            ) {
+                fprintf(stderr, "[S17] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            } 
+            node->dataType = AST_DATATYPE_UNKNOWN;
+            break;
+
+        case AST_RIGHT_ASSIGN:
+        case AST_LEFT_ASSIGN:
+            if(getSymbolDataTypeAsASTDataType(node->symbol) != node->nodes[0]->dataType) {
+                fprintf(stderr, "[S18] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            }
+            node->dataType = AST_DATATYPE_UNKNOWN;
+            break;
 
         default:
             break;
     }
+    //astPrint(astFinal, 0);
 }
 
-void checkFunc(AstNode* node) {
-    
+int getSymbolDataTypeAsASTDataType(HashNode* node) {
+    if(node == NULL)
+        return 0;
+    switch (node->dataType)
+    {
+    case DATATYPE_BOOL:
+        return AST_DATATYPE_BOOL;
+        break;
+    case DATATYPE_INT:
+        return AST_DATATYPE_INT;
+        break;
+    case DATATYPE_POINTER:
+        return AST_DATATYPE_POINTER;
+        break;
+    case DATATYPE_CHAR:
+        return AST_DATATYPE_CHAR;
+        break;
+    default:
+        return AST_DATATYPE_ERROR;
+        break;
+    }
+}
+
+void checkFuncReturn(AstNode* node) {
+    if(node == NULL)
+        return;    
+
+    if(node->type == AST_FUNCAO) {
+
+    }
 }
 
 
@@ -308,6 +439,43 @@ int isPointerOperand(AstNode* node) {
 
     return ret;
 }
+
+int hasSymbolIdentifier(AstNode* node) {
+    int ret = 0;
+    int type;
+
+    if(node == NULL)
+        return ret;
+    
+    if(node->symbol != NULL) {
+        type = node->symbol->type;
+        if( (type == SYMBOL_FUNCTION) ||
+            (type == SYMBOL_VARIABLE) ||
+            (type == SYMBOL_VECTOR)
+            )
+            ret = 1;
+    }
+    return ret;
+}
+/*
+int isIdentifier(AstNode* node) {
+    int ret = 0;
+    int type;
+
+    if(node == NULL)
+        return ret;
+    
+    if(node->symbol != NULL) {
+        type = node->symbol->type;
+        if( (type == SYMBOL_FUNCTION) ||
+            (type == SYMBOL_VARIABLE) ||
+            (type == SYMBOL_VECTOR)
+            )
+            ret = 1;
+    }
+    return ret;
+}
+*/
 
 void checkUndeclared() {
     SemanticErrors += hashCheckUndeclared();
