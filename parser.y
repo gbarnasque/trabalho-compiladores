@@ -89,7 +89,7 @@
 programa: l_declaracao { 
                         $$ = $1; 
                         astFinal = $$; 
-                        astPrint(astFinal, 0); 
+                        //astPrint(astFinal, 0); 
                         semanticVerification(astFinal);
                         }
     ;

@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
   //}
 
   //descompiladorAST(astFinal);
-  //astPrint(astFinal, 0);
+  astPrint(astFinal, 0);
 
   fprintf(stderr, "File has %d lines\n", getLineNumber());
   printHashTable();

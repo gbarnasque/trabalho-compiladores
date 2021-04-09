@@ -54,6 +54,7 @@ HashNode* hashInsert(int type, char* text) {
     ret->next = hashTable[address];
     ret->dataType = 0;
     ret->numParameters = 0;
+    ret->dataTypesParameters = NULL;
     hashTable[address] = ret;
     return ret;
 }

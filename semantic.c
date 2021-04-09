@@ -23,17 +23,18 @@ void semanticVerification(AstNode* node) {
     checkUndeclared();
     printf("End checkUndeclared\n");
 
-    printf("Start fillDataTypes\n");
-    fillDataTypes(node);
-    printf("End fillDataTypes\n");
-
     printf("Start checkOperands\n");
     checkOperands(node);
     printf("End checkOperands\n");
 
-    printf("Start checkFuncReturn");
+    printf("Start checkFuncReturn\n");
     checkFuncReturn(node);
-    printf("End checkFuncReturn");
+    printf("End checkFuncReturn\n");
+
+    printf("Start checkFuncCallParams\n");
+    preCheckFuncCallParams(node);
+    checkFuncCallParams(node);
+    printf("End checkFuncCallParams\n");
 
     fprintf(stderr, "End Semantic Verification\n");
     fprintf(stderr, "---------------------\n");
@@ -112,6 +113,7 @@ void checkAndSetDeclarations(AstNode* node) {
         case AST_FUNCAO_CABECALHO:
             checkAndSetIdentifier(node, SYMBOL_FUNCTION);
             node->symbol->numParameters = countParametersFunction(node->nodes[1]);
+            printf("%s, coutn params: %d\n", node->symbol->text, node->symbol->numParameters );
             break;
         default: 
             break;
@@ -127,6 +129,113 @@ int countParametersFunction(AstNode* node) {
 
     return 1 + countParametersFunction(node->nodes[1]);
 }
+int countParametersCallFunction(AstNode* node) {
+    if(node == NULL)
+        return 0;
+    
+    return 1 + countParametersCallFunction(node->nodes[1]);
+}
+
+int* getDataTypesFuncParameters(AstNode* node, int chamada) {
+    int* aux;
+
+    if(node->symbol->numParameters == 0)
+        return NULL;
+
+    //printf("params: %d %d\n", node->symbol->numParameters, node->nodes[1]->symbol->type);
+    aux = (int*) malloc(sizeof(int)*(node->symbol->numParameters));
+
+    if(chamada == 1)
+        fillDataTypeFuncParameters(node->nodes[0], aux, 0);
+    else
+        fillDataTypeFuncParameters(node->nodes[1], aux, 0);
+
+    printf("fillDataTypeFuncParameters");
+    for(int i=0; i<node->symbol->numParameters; i++) {
+        printf("%d, ", aux[i]);
+    }
+    printf("\n");
+    return aux;
+}
+
+void fillDataTypeFuncParameters(AstNode* currentNode, int* dataTypeParameters, int current) {
+    int i;
+    if(currentNode == NULL)
+        return;
+
+    dataTypeParameters[current] = getSymbolDataTypeAsASTDataType(currentNode->symbol);
+
+    fillDataTypeFuncParameters(currentNode->nodes[1], dataTypeParameters, current+1);
+}
+
+void preCheckFuncCallParams(AstNode* node) {
+    int i;
+    if(node == NULL)
+        return;
+
+    for(i=0; i<MAX_SONS; i++)
+        preCheckFuncCallParams(node->nodes[i]);
+
+    if(node->type == AST_FUNCAO_CABECALHO){
+    printf("ORIGINAL:\n");
+        node->symbol->dataTypesParameters = getDataTypesFuncParameters(node, 0);
+    }
+
+    
+}
+
+void checkFuncCallParams(AstNode* node) {
+    int i;
+    int* aux;
+    size_t sizeAux, sizeReal;
+    if(node == NULL)
+        return;
+    //aux = (int*) malloc(sizeof(int)*node->symbol->numParameters);
+    for(i=0; i<MAX_SONS; i++)
+        checkFuncCallParams(node->nodes[i]);
+    //printf("%d\n", node->type);
+    
+
+    if(node->type == AST_FUNCAO_CHAMADA) {
+        printf("func call\n");
+        if(node->symbol != NULL){
+            printf("CHAMADA:\n");
+            aux = getDataTypesFuncParameters(node, 1);
+            sizeAux = sizeof(aux) / sizeof(int);
+            sizeReal = sizeof(node->symbol->dataTypesParameters) / sizeof(int);
+            printf("%d\n", node->symbol->numParameters);
+            //printf("%d %d\n", sizeAux, sizeReal);
+            for(int i=0; i<sizeReal; i++) {
+                printf("%d %d\n", aux[i], node->symbol->dataTypesParameters[i]);
+                if(aux[i] != node->symbol->dataTypesParameters[i]) {
+                    fprintf(stderr, "[S21] Semantic ERRORS: incompatible types for func call in Line %d\n",  node->lineNumber);
+                    ++SemanticErrors;
+                }
+            }
+            // if(checkDataTypeParameters(node->nodes[1], node->symbol->dataTypesParameters, 0, node->symbol->numParameters) == 1) {
+            //     fprintf(stderr, "[S21] Semantic ERRORS: incompatible types for func call in Line %d\n",  node->lineNumber);
+            //     ++SemanticErrors;
+            // }
+        }
+    }
+
+}
+
+// If return == 1, a mismatch occured
+int checkDataTypeParameters(AstNode* currentNode, int* dataTypeParameters, int current, int capacity) {
+    int i;
+    if(currentNode == NULL)
+        return 0;
+
+    if(current > capacity-1)
+        return 1;
+
+    if(checkDataTypeCompatibility(dataTypeParameters[current], getSymbolDataTypeAsASTDataType(currentNode->symbol)) == 0)
+        return 1;
+    
+    return checkDataTypeParameters(currentNode->nodes[1], dataTypeParameters, current+1, capacity);
+}
+
 
 void checkAndSetIdentifier(AstNode* node, int type) {
     if(node->symbol != NULL) {
@@ -146,7 +255,6 @@ void checkOperands(AstNode* node) {
     if(node == NULL)
         return;
     
-
     for(i=0; i<MAX_SONS; i++)
         checkOperands(node->nodes[i]);
 
@@ -306,6 +414,13 @@ void checkOperands(AstNode* node) {
             node->dataType = AST_DATATYPE_UNKNOWN;
             break;
 
+        case AST_FUNCAO_CHAMADA:
+            if(countParametersCallFunction(node->nodes[0]) != node->symbol->numParameters) {
+                fprintf(stderr, "[S19] Semantic ERRORS: number of variables does not match at Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            }
+            node->dataType = getSymbolDataTypeAsASTDataType(node->symbol);
+            break;
         default:
             break;
     }
@@ -336,12 +451,57 @@ int getSymbolDataTypeAsASTDataType(HashNode* node) {
 }
 
 void checkFuncReturn(AstNode* node) {
+    int i;
     if(node == NULL)
         return;    
-
+    
     if(node->type == AST_FUNCAO) {
-
+        if(node->nodes[0] != NULL){
+            if(checkDataTypeCompatibility(node->nodes[0]->dataType, getReturnDataTypeFunc(node->nodes[1])) == 0) {
+                fprintf(stderr, "[S20] Semantic ERRORS: invalid return at func in Line %d\n",  node->lineNumber);
+                ++SemanticErrors;
+            }
+        }
     }
+
+    for(i=0; i<MAX_SONS; i++)
+        checkFuncReturn(node->nodes[i]);
+}
+
+int getReturnDataTypeFunc(AstNode* node) {
+    int ret = 0;
+    int i;
+    if(node == NULL)
+        return ret;
+
+
+    if(node->type == AST_RETURN){
+        return node->dataType;
+    }
+    
+
+    for(i=0; i<MAX_SONS; i++){
+        ret = getReturnDataTypeFunc(node->nodes[i]);
+        if(ret != 0)
+            return ret;
+    }
+    return ret;
+}
+
+int checkDataTypeCompatibility(int datatype1, int datatype2) {
+    if(datatype1 == 0 || datatype2 == 0){
+        return 0;
+    }
+    else if(datatype1 == datatype2) {
+        return 1;
+    }
+    else if(datatype1 == AST_DATATYPE_INT && datatype2 == AST_DATATYPE_CHAR) {
+        return 1;
+    }
+    else if(datatype2 == AST_DATATYPE_INT && datatype1 == AST_DATATYPE_CHAR) {
+        return 1;
+    }
+    return 0;
 }
 
 
