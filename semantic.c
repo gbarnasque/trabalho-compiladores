@@ -11,31 +11,31 @@ int SemanticErrors = 0;
 void semanticVerification(AstNode* node) {
     fprintf(stderr, "---------------------\n");
     fprintf(stderr, "Start Semantic Verification\n");
-    printf("Start SetDeclarations\n");
+    //printf("Start SetDeclarations\n");
     checkAndSetDeclarations(node); 
-    printf("End SetDeclarations\n");
+    //printf("End SetDeclarations\n");
 
-    printf("Start setBaseDataTypes\n");
+    //printf("Start setBaseDataTypes\n");
     setBaseDataTypes(node);
-    printf("End setBaseDataTypes\n");
+    //printf("End setBaseDataTypes\n");
 
-    printf("Start checkUndeclared\n");
+    //printf("Start checkUndeclared\n");
     checkUndeclared();
-    printf("End checkUndeclared\n");
+    //printf("End checkUndeclared\n");
 
-    printf("Start checkOperands\n");
+    //printf("Start checkOperands\n");
     checkOperands(node);
-    printf("End checkOperands\n");
+    //printf("End checkOperands\n");
 
-    printf("Start checkFuncReturn\n");
+    //printf("Start checkFuncReturn\n");
     checkFuncReturn(node);
-    printf("End checkFuncReturn\n");
+    //printf("End checkFuncReturn\n");
 
-    printf("Start checkFuncCallParams\n");
+    /*printf("Start checkFuncCallParams\n");
     preCheckFuncCallParams(node);
     checkFuncCallParams(node);
     printf("End checkFuncCallParams\n");
-
+*/
     fprintf(stderr, "End Semantic Verification\n");
     fprintf(stderr, "---------------------\n");
 }
@@ -113,7 +113,7 @@ void checkAndSetDeclarations(AstNode* node) {
         case AST_FUNCAO_CABECALHO:
             checkAndSetIdentifier(node, SYMBOL_FUNCTION);
             node->symbol->numParameters = countParametersFunction(node->nodes[1]);
-            printf("%s, coutn params: %d\n", node->symbol->text, node->symbol->numParameters );
+            //printf("%s, coutn params: %d\n", node->symbol->text, node->symbol->numParameters );
             break;
         default: 
             break;
@@ -136,7 +136,7 @@ int countParametersCallFunction(AstNode* node) {
     return 1 + countParametersCallFunction(node->nodes[1]);
 }
 
-int* getDataTypesFuncParameters(AstNode* node, int chamada) {
+int* getDataTypesFuncParameters(AstNode* node) {
     int* aux;
 
     if(node->symbol->numParameters == 0)
@@ -145,10 +145,7 @@ int* getDataTypesFuncParameters(AstNode* node, int chamada) {
     //printf("params: %d %d\n", node->symbol->numParameters, node->nodes[1]->symbol->type);
     aux = (int*) malloc(sizeof(int)*(node->symbol->numParameters));
 
-    if(chamada == 1)
-        fillDataTypeFuncParameters(node->nodes[0], aux, 0);
-    else
-        fillDataTypeFuncParameters(node->nodes[1], aux, 0);
+    fillDataTypeFuncParameters(node->nodes[1], aux, 0);
 
     printf("fillDataTypeFuncParameters");
     for(int i=0; i<node->symbol->numParameters; i++) {
@@ -158,14 +155,14 @@ int* getDataTypesFuncParameters(AstNode* node, int chamada) {
     return aux;
 }
 
-void fillDataTypeFuncParameters(AstNode* currentNode, int* dataTypeParameters, int current) {
+void fillDataTypeFuncParameters(AstNode* currentNode, int* dataTypeParameters, int curr) {
     int i;
     if(currentNode == NULL)
         return;
 
-    dataTypeParameters[current] = getSymbolDataTypeAsASTDataType(currentNode->symbol);
+    dataTypeParameters[curr] = getSymbolDataTypeAsASTDataType(currentNode->symbol);
 
-    fillDataTypeFuncParameters(currentNode->nodes[1], dataTypeParameters, current+1);
+    fillDataTypeFuncParameters(currentNode->nodes[1], dataTypeParameters, curr+1);
 }
 
 void preCheckFuncCallParams(AstNode* node) {
@@ -178,9 +175,37 @@ void preCheckFuncCallParams(AstNode* node) {
 
     if(node->type == AST_FUNCAO_CABECALHO){
     printf("ORIGINAL:\n");
-        node->symbol->dataTypesParameters = getDataTypesFuncParameters(node, 0);
+        node->symbol->dataTypesParameters = getDataTypesFuncParameters(node);
     }
 
+    
+}
+
+int* getDataTypesFuncParametersCall(AstNode* node) {
+    int* aux;
+    int* current;
+    if(node->symbol->numParameters == 0)
+        return NULL;
+
+    aux = (int*) malloc(sizeof(int)*(node->symbol->numParameters));
+    current = (int*) malloc(sizeof(int));
+    fillDataTypeFuncParametersCall(node->nodes[0], aux, current);
+
+    return aux;
+}
+
+void fillDataTypeFuncParametersCall(AstNode* currentNode, int* dataTypeParameters, int* current) {
+    int i;
+    if(currentNode == NULL)
+        return;
+
+    if(currentNode->dataType != AST_DATATYPE_ERROR && currentNode->dataType != AST_DATATYPE_ERROR ){
+        dataTypeParameters[*current] = currentNode->dataType;//getSymbolDataTypeAsASTDataType(currentNode->symbol);
+        *current++;
+    }
+
+    for(int i=0; i<MAX_SONS; i++)
+        fillDataTypeFuncParametersCall(currentNode->nodes[i], dataTypeParameters, current);
     
 }
 
@@ -190,7 +215,7 @@ void checkFuncCallParams(AstNode* node) {
     size_t sizeAux, sizeReal;
     if(node == NULL)
         return;
-    //aux = (int*) malloc(sizeof(int)*node->symbol->numParameters);
+    
     for(i=0; i<MAX_SONS; i++)
         checkFuncCallParams(node->nodes[i]);
     //printf("%d\n", node->type);
@@ -199,13 +224,13 @@ void checkFuncCallParams(AstNode* node) {
     if(node->type == AST_FUNCAO_CHAMADA) {
         printf("func call\n");
         if(node->symbol != NULL){
+            //aux = (int*) malloc(sizeof(int)*node->symbol->numParameters);
             printf("CHAMADA:\n");
-            aux = getDataTypesFuncParameters(node, 1);
-            sizeAux = sizeof(aux) / sizeof(int);
-            sizeReal = sizeof(node->symbol->dataTypesParameters) / sizeof(int);
-            printf("%d\n", node->symbol->numParameters);
+            aux = getDataTypesFuncParametersCall(node);
+            //sizeReal = sizeof(node->symbol->dataTypesParameters) / sizeof(int);
+            //printf("%d\n", node->symbol->numParameters);
             //printf("%d %d\n", sizeAux, sizeReal);
-            for(int i=0; i<sizeReal; i++) {
+            for(int i=0; i<node->symbol->numParameters; i++) {
                 printf("%d %d\n", aux[i], node->symbol->dataTypesParameters[i]);
                 if(aux[i] != node->symbol->dataTypesParameters[i]) {
                     fprintf(stderr, "[S21] Semantic ERRORS: incompatible types for func call in Line %d\n",  node->lineNumber);

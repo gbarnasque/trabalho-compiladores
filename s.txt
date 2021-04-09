@@ -19,8 +19,8 @@ int t(int h) {
 
 char main () {
   a <- 5 / 3 * t(a) + (v[2] - i) + c;
-  a <- t(bt);
-  bf <- 5 > 3;
+  a <- t(mat[3] + v['a']);
+  bf <- test(a, true, p);
   a -> v[2];
   v[3] <- mat[3];
   p <- p + 2 + 1;

@@ -25,8 +25,10 @@ int getReturnDataTypeFunc(AstNode*);
 
 int countParametersFunction(AstNode*);
 int countParametersCallFunction(AstNode*);
-int* getDataTypesFuncParameters(AstNode*, int);
+int* getDataTypesFuncParameters(AstNode*);
+int* getDataTypesFuncParametersCall(AstNode*);
 void fillDataTypeFuncParameters(AstNode*, int*, int);
+void fillDataTypeFuncParametersCall(AstNode*, int*, int*);
 int checkDataTypeParameters(AstNode*, int*, int, int);
 
 int isIntegerOperand(AstNode*);

@@ -33,12 +33,12 @@ int main(int argc, char** argv) {
   }
 
   semanticErrors = getSemanticErrors();
-  //if(semanticErrors > 0){
+  if(semanticErrors > 0){
     fprintf(stderr,"\x1b[31m Program has %d semantic errors!\n \x1b[0m", semanticErrors);
-    //exit(4);
-  //}
+    exit(4);
+  }
 
-  //descompiladorAST(astFinal);
+  descompiladorAST(astFinal);
   astPrint(astFinal, 0);
 
   fprintf(stderr, "File has %d lines\n", getLineNumber());
