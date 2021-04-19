@@ -1,9 +1,9 @@
 # Autor: Gustavo Oliva Barnasque
 # Matricula: 00263056
 #
-# Makefile para etapa 2 de compiladores 
+# Makefile para etapa 4 de compiladores 
 
-ETAPA=etapa3
+ETAPA=etapa4
 
 ${ETAPA}: y.tab.c lex.yy.c
 	gcc lex.yy.c -o ${ETAPA}
