@@ -32,11 +32,11 @@ int main(int argc, char** argv) {
     exit(2);
   }
 
-  semanticErrors = getSemanticErrors();
-  if(semanticErrors > 0){
-    fprintf(stderr,"\x1b[31m Program has %d semantic errors!\n \x1b[0m", semanticErrors);
-    exit(4);
-  }
+  //semanticErrors = getSemanticErrors();
+  //if(semanticErrors > 0){
+    //fprintf(stderr,"\x1b[31m Program has %d semantic errors!\n \x1b[0m", semanticErrors);
+    //exit(4);
+  //}
 
   descompiladorAST(astFinal);
   astPrint(astFinal, 0);

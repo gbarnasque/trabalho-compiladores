@@ -1,0 +1,26 @@
+bool bf : false;
+bool bt : true;
+char c : 'x';
+int a : 'A';
+int i : 0;
+int[10] v : 0 0 0 0 0 0 0 0 0 0 ;
+int[10] mat ;
+pointer p : 'a';
+bool test (int com, bool b, pointer ahga) {
+  print "teste";
+  read a;
+  return false;
+};
+int t (int h) {
+  return mat [2];
+};
+char main () {
+  a <- 5 / 3 * t(a) + (v [2] - i) + c;
+  a <- t(mat [3] + v ['a']);
+  bf <- test(a, true, p);
+  a -> v[2];
+  v[3] <- mat [3];
+  p <- p + 2 + 1;
+  p + 3 + 'a' -> p;
+  return 42;
+};
