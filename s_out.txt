@@ -8,19 +8,21 @@ int[10] mat ;
 pointer p : 'a';
 bool test (int com, bool b, pointer ahga) {
   print "teste";
-  read a;
   return false;
 };
 int t (int h) {
-  return mat [2];
+  return mat[2];
 };
 char main () {
-  a <- 5 / 3 * t(a) + (v [2] - i) + c;
-  a <- t(mat [3] + v ['a']);
+  a <- 5 / 3 * t(a) + (v[2] - i) + c;
+  a <- t(mat[3] + v['a']);
   bf <- test(a, true, p);
   a -> v[2];
-  v[3] <- mat [3];
+  v[3] <- mat[3];
   p <- p + 2 + 1;
   p + 3 + 'a' -> p;
+  if (a >= 2 & a < 312) then i <- a else {
+  false -> bt;
+};
   return 42;
 };

@@ -9,6 +9,7 @@
   #include "hash.h"
   #include "ast.h"
   #include "semantic.h"
+  #include "tacs.h"
   #include "y.tab.h"
 
   int running = 1;
@@ -78,6 +79,7 @@
 #include "hash.c"
 #include "ast.c"
 #include "semantic.c"
+#include "tacs.c"
 #include "main.c"
 
 int yywrap() {

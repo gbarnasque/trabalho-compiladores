@@ -38,11 +38,13 @@ int main(int argc, char** argv) {
     //exit(4);
   //}
 
+  tacPrintBackwards(generateCode(astFinal));
+
   descompiladorAST(astFinal);
-  astPrint(astFinal, 0);
+  //astPrint(astFinal, 0);
 
   fprintf(stderr, "File has %d lines\n", getLineNumber());
-  printHashTable();
+  //printHashTable();
   fprintf(stderr, "Compilation successful!\n");
 
   exit(0);
@@ -216,7 +218,7 @@ void descompiladorAST(AstNode* node) {
       descompiladorAST(node->nodes[1]);
       break;
     case AST_VETOR: 
-      fprintf(out_arq, "%s [", node->symbol->text);
+      fprintf(out_arq, "%s[", node->symbol->text);
       descompiladorAST(node->nodes[0]);
       fprintf(out_arq, "]");
       break;
