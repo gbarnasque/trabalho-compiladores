@@ -47,6 +47,20 @@ void tacPrintBackwards(TacNode* node) {
     tacPrint(node);
 }
 
+TacNode* tacJoin(TacNode* list1, TacNode* list2) {
+    TacNode* point;
+    if(list1 == NULL)
+        return list2;
+    if(list2 == NULL)
+        return list1;
+        
+    for(point = list2; point->prev != NULL; point = point->prev){
+
+    }
+    point->prev = list1;
+    return list2;
+}
+
 //Code Generation
 
 TacNode* generateCode(AstNode* node) {
@@ -70,7 +84,7 @@ TacNode* generateCode(AstNode* node) {
             break;
         
         default: // return union of code for all children(subtrees)
-            
+            result = tacJoin(code[0], tacJoin(code[1], tacJoin(code[2], code[3])));
             break;
     }
 

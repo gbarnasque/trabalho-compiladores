@@ -335,6 +335,7 @@ void checkOperands(AstNode* node) {
                 fprintf(stderr, "[S06] Semantic ERROR: invalid Right operand at Line %d\n", node->lineNumber);
                 ++SemanticErrors;
             }
+            node->dataType = AST_DATATYPE_BOOL;
             break;
 
         case AST_OP_TIL:
@@ -342,6 +343,7 @@ void checkOperands(AstNode* node) {
                 fprintf(stderr, "[S07] Semantic ERRORS: invalid operand at Line %d\n",  node->lineNumber);
                 ++SemanticErrors;
             }
+            node->dataType = AST_DATATYPE_BOOL;
             break;
 
         case AST_IF:

@@ -24,7 +24,7 @@ char main () {
   v[3] <- mat[3];
   p <- p + 2 + 1;
   p + 3 + 'a' -> p;
-
+  
   if(a>=2 & a<312) then
       i <- a
     else {
