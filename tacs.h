@@ -23,6 +23,16 @@ void tacPrint(TacNode*);
 void tacPrintBackwards(TacNode*);
 
 TacNode* tacJoin(TacNode*, TacNode*);
+TacNode* tripleTacJoinLast(TacNode*, TacNode*, TacNode*);
+TacNode* quadTacJoinLast(TacNode*, TacNode*, TacNode*, TacNode*);
+TacNode* tripleTacJoinFirst(TacNode*, TacNode*, TacNode*);
+TacNode* quadTacJoinFirst(TacNode*, TacNode*, TacNode*, TacNode*); 
+
+HashNode* getRes(TacNode*);
+
+// Makes to make life easier
+TacNode* makeBinaryOperation(int, TacNode*, TacNode*);
+TacNode* makeIfThen(TacNode*, TacNode*);
 
 //Code Generation
 TacNode* generateCode(AstNode*);

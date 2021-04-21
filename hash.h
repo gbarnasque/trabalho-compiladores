@@ -15,6 +15,7 @@
 #define SYMBOL_VARIABLE   7
 #define SYMBOL_FUNCTION   8
 #define SYMBOL_VECTOR     9
+#define SYMBOL_LABEL      10
 
 #define DATATYPE_INT     1
 #define DATATYPE_CHAR    2
@@ -41,5 +42,7 @@ void printHashTable();
 int hashCheckUndeclared();
 char* getSymbolText(int);
 char* getDatatypeText(int);
+HashNode* makeTemp();
+HashNode* makeLabel();
 
 #endif

@@ -4,3 +4,8 @@
 #define TAC_SUB 3
 #define TAC_MULT 4
 #define TAC_DIV 5
+
+#define TAC_COPY 6
+
+#define TAC_JFALSE 7
+#define TAC_LABEL 8

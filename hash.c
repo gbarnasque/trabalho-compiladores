@@ -130,3 +130,17 @@ char* getDatatypeText(int dt) {
     }
     return "";
 }
+
+HashNode* makeTemp() {
+    static int serial = 0;
+    char buffer[256] = "";
+    sprintf(buffer, "MyW31rd_T3mP_%d", serial++);
+    return hashInsert(SYMBOL_VARIABLE, buffer);
+}
+
+HashNode* makeLabel() {
+    static int serial = 0;
+    char buffer[256] = "";
+    sprintf(buffer, "MyL4b3l_T3mP_%d", serial++);
+    return hashInsert(SYMBOL_LABEL, buffer);
+}

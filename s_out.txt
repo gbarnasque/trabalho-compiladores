@@ -14,6 +14,7 @@ int t (int h) {
   return mat[2];
 };
 char main () {
+  a <- 1 + 2 + 3 + a;
   a <- 5 / 3 * t(a) + (v[2] - i) + c;
   a <- t(mat[3] + v['a']);
   bf <- test(a, true, p);
@@ -21,8 +22,11 @@ char main () {
   v[3] <- mat[3];
   p <- p + 2 + 1;
   p + 3 + 'a' -> p;
-  if (a >= 2 & a < 312) then i <- a else {
-  false -> bt;
+  if (a >= 2 & a < 312) then {
+  i <- 666;
+};
+  if (a + 5) then {
+  i <- a;
 };
   return 42;
 };

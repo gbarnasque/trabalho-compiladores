@@ -38,10 +38,10 @@ int main(int argc, char** argv) {
     //exit(4);
   //}
 
-  tacPrintBackwards(generateCode(astFinal));
-
   descompiladorAST(astFinal);
-  //astPrint(astFinal, 0);
+  astPrint(astFinal, 0);
+
+  tacPrintBackwards(generateCode(astFinal));
 
   fprintf(stderr, "File has %d lines\n", getLineNumber());
   //printHashTable();
