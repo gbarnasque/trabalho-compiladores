@@ -25,7 +25,7 @@ char main () {
   if (a >= 2 & a < 312) then {
   i <- 666;
 };
-  if (a + 5) then {
+  if (a < 5) then {
   i <- a;
 };
   return 42;

@@ -31,6 +31,7 @@ TacNode* quadTacJoinFirst(TacNode*, TacNode*, TacNode*, TacNode*);
 HashNode* getRes(TacNode*);
 
 // Makes to make life easier
+TacNode* makeUnaryOperation(int, TacNode*);
 TacNode* makeBinaryOperation(int, TacNode*, TacNode*);
 TacNode* makeIfThen(TacNode*, TacNode*);
 

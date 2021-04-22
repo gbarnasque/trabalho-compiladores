@@ -35,8 +35,19 @@ void tacPrint(TacNode* node) {
         case TAC_COPY: fprintf(stderr, "TAC_COPY"); break;
         case TAC_JFALSE: fprintf(stderr, "TAC_JFALSE"); break;
         case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
+        case TAC_LO: fprintf(stderr, "TAC_LO"); break;
+        case TAC_GR: fprintf(stderr, "TAC_GR"); break;
+        case TAC_PIPE: fprintf(stderr, "TAC_PIPE"); break;
+        case TAC_AND: fprintf(stderr, "TAC_AND"); break;
+        case TAC_LE: fprintf(stderr, "TAC_LE"); break;
+        case TAC_GE: fprintf(stderr, "TAC_GE"); break;
+        case TAC_EQ: fprintf(stderr, "TAC_EQ"); break;
+        case TAC_DIF: fprintf(stderr, "TAC_DIF"); break;
+        case TAC_TIL: fprintf(stderr, "TAC_TIL"); break;
+        case TAC_DOLAR: fprintf(stderr, "TAC_DOLAR"); break;
+        case TAC_HASHTAG: fprintf(stderr, "TAC_HASHTAG"); break;
     
-        default: fprintf(stderr, "TAC UNKNOWN"); break;
+        default: fprintf(stderr, "TAC_UNKNOWN"); break;
     }
 
     fprintf(stderr, ", %s", (node->res != NULL) ? node->res->text : "");
@@ -87,6 +98,10 @@ HashNode* getRes(TacNode* node) {
     return node->res;
 }
 
+TacNode* makeUnaryOperation(int TacType, TacNode* code0) {
+    return tacJoin(code0, tacCreate(TacType, makeTemp(), getRes(code0), NULL));
+}
+
 TacNode* makeBinaryOperation(int TacType, TacNode* code0, TacNode* code1) {
     return tripleTacJoinLast(code0, code1, tacCreate(TacType, makeTemp(), getRes(code0), getRes(code1)));
 }
@@ -129,6 +144,48 @@ TacNode* generateCode(AstNode* node) {
             //result = tacJoin(tacJoin(code[0], code[1]), tacCreate(TAC_ADD, NULL, (code[0] != NULL) ? code[0]->res : NULL, (code[1] != NULL) ? code[1]->res : NULL));
             //result = tripleTacJoinLast(code[0], code[1], tacCreate(TAC_ADD, makeTemp(), getRes(code[0]), getRes(code[1])));
             result = makeBinaryOperation(TAC_ADD, code[0], code[1]);
+            break;
+        case AST_OP_MINUS:
+            result = makeBinaryOperation(TAC_SUB, code[0], code[1]);
+            break;
+        case AST_OP_MULT:
+            result = makeBinaryOperation(TAC_MULT, code[0], code[1]);
+            break;
+        case AST_OP_DIV:
+            result = makeBinaryOperation(TAC_DIV, code[0], code[1]);
+            break;
+        case AST_OP_LO:
+            result = makeBinaryOperation(TAC_LO, code[0], code[1]);
+            break;
+        case AST_OP_GR:
+            result = makeBinaryOperation(TAC_GR, code[0], code[1]);
+            break;
+        case AST_OP_PIPE:
+            result = makeBinaryOperation(TAC_PIPE, code[0], code[1]);
+            break;
+        case AST_OP_AND:
+            result = makeBinaryOperation(TAC_AND, code[0], code[1]);
+            break;
+        case AST_OP_LE:
+            result = makeBinaryOperation(TAC_LE, code[0], code[1]);
+            break;
+        case AST_OP_GE:
+            result = makeBinaryOperation(TAC_GE, code[0], code[1]);
+            break;
+        case AST_OP_EQ:
+            result = makeBinaryOperation(TAC_EQ, code[0], code[1]);
+            break;
+        case AST_OP_DIF:
+            result = makeBinaryOperation(TAC_DIF, code[0], code[1]);
+            break;
+        case AST_OP_TIL:
+            result = makeUnaryOperation(TAC_TIL, code[0]);
+            break;
+        case AST_OP_DOLAR:
+            result = makeUnaryOperation(TAC_DOLAR, code[0]);
+            break;
+        case AST_OP_HASHTAG:
+            result = makeUnaryOperation(TAC_HASHTAG, code[0]);
             break;
         case AST_LEFT_ASSIGN:
         case AST_RIGHT_ASSIGN:
