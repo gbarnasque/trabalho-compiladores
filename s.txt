@@ -22,17 +22,27 @@ char main () {
   a <- t(mat[3] + v['a']);
   bf <- test(a, true, p);
   a -> v[2];
-  v[3] <- mat[3];
+  v[3] <- mat[3] + 4;
   p <- p + 2 + 1;
   p + 3 + 'a' -> p;
   
+
   if(a>=2 & a<312) then {
       i <- 666;
   };
 
   if( a < 5) then {
       i <- a;
+  } else {
+    i <- a;
   };
+
+  while( a< 5) {
+    i <- b;
+  };
+
+  read a;
+  print "teste" , "oi", "tudo", "bem";
 
   return 42;
 };

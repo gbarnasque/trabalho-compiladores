@@ -34,6 +34,7 @@ void tacPrint(TacNode* node) {
         case TAC_DIV: fprintf(stderr, "TAC_DIV"); break;
         case TAC_COPY: fprintf(stderr, "TAC_COPY"); break;
         case TAC_JFALSE: fprintf(stderr, "TAC_JFALSE"); break;
+        case TAC_JUMP: fprintf(stderr, "TAC_JUMP"); break;
         case TAC_LABEL: fprintf(stderr, "TAC_LABEL"); break;
         case TAC_LO: fprintf(stderr, "TAC_LO"); break;
         case TAC_GR: fprintf(stderr, "TAC_GR"); break;
@@ -46,7 +47,15 @@ void tacPrint(TacNode* node) {
         case TAC_TIL: fprintf(stderr, "TAC_TIL"); break;
         case TAC_DOLAR: fprintf(stderr, "TAC_DOLAR"); break;
         case TAC_HASHTAG: fprintf(stderr, "TAC_HASHTAG"); break;
-    
+        case TAC_WHILE: fprintf(stderr, "TAC_WHILE"); break;
+        case TAC_RETURN: fprintf(stderr, "TAC_RETURN"); break;
+        case TAC_PRINT: fprintf(stderr, "TAC_PRINT"); break;
+        case TAC_READ: fprintf(stderr, "TAC_READ"); break;
+        case TAC_PRINT_ARG: fprintf(stderr, "TAC_PRINT_ARG"); break;
+        case TAC_FUNCAO_CHAMADA: fprintf(stderr, "TAC_FUNCAO_CHAMADA"); break;
+        case TAC_FUNCAO_CABECALHO: fprintf(stderr, "TAC_FUNCAO_CABECALHO"); break; 
+        case TAC_LISTA_PARAMETROS_DECLARACAO: fprintf(stderr, "TAC_LISTA_PARAMETROS_DECLARACAO"); break;
+
         default: fprintf(stderr, "TAC_UNKNOWN"); break;
     }
 
@@ -98,8 +107,16 @@ HashNode* getRes(TacNode* node) {
     return node->res;
 }
 
+TacNode* makeUnaryOperationWithSymbol(int TacType, HashNode* symbol, TacNode* code0) {
+    return tacJoin(code0, tacCreate(TacType, symbol, getRes(code0), NULL));
+}
+
 TacNode* makeUnaryOperation(int TacType, TacNode* code0) {
     return tacJoin(code0, tacCreate(TacType, makeTemp(), getRes(code0), NULL));
+}
+
+TacNode* makeBinaryOperationwithSymbol(int TacType, HashNode* symbol, TacNode* code0, TacNode* code1) {
+    return tripleTacJoinLast(code0, code1, tacCreate(TacType, symbol, getRes(code0), getRes(code1)));
 }
 
 TacNode* makeBinaryOperation(int TacType, TacNode* code0, TacNode* code1) {
@@ -117,6 +134,57 @@ TacNode* makeIfThen(TacNode* code0, TacNode* code1) {
     label = tacCreate(TAC_LABEL, newLabel, NULL, NULL);
     label->prev = code1;
     return tacJoin(jump, label);
+}
+TacNode* makeIfThenElse(TacNode* code0, TacNode* code1, TacNode* code2) {
+    TacNode* jumpFalse = NULL;
+    TacNode* jumpInconditional = NULL;
+    TacNode* label1 = NULL;
+    TacNode* label2 = NULL;
+    HashNode* newLabel1 = NULL;
+    HashNode* newLabel2 = NULL;
+
+    newLabel1 = makeLabel();
+    newLabel2 = makeLabel();
+    
+    jumpFalse = tacCreate(TAC_JFALSE, newLabel1, getRes(code0), NULL );
+    jumpFalse->prev = code0;
+
+    jumpInconditional = tacCreate(TAC_JUMP, newLabel2, NULL, NULL);
+    jumpInconditional->prev = code1;
+
+    label1 = tacCreate(TAC_LABEL, newLabel1, NULL, NULL);
+    label1->prev = jumpInconditional;
+
+    label2 = tacCreate(TAC_LABEL, newLabel2, NULL, NULL);
+    label2->prev = code2;
+    
+    
+    return tripleTacJoinFirst(jumpFalse, label1, label2);
+}
+TacNode* makeWhile(TacNode* code0, TacNode* code1) { 
+    TacNode* jumpFalse = NULL;
+    TacNode* jumpInconditional = NULL;
+    TacNode* label1 = NULL;
+    TacNode* label2 = NULL;
+    HashNode* newLabel1 = NULL;
+    HashNode* newLabel2 = NULL;
+
+    newLabel1 = makeLabel();
+    newLabel2 = makeLabel();
+
+    label2 = tacCreate(TAC_LABEL, newLabel2, NULL, NULL);
+    label2->prev = code0;
+
+    jumpFalse = tacCreate(TAC_WHILE, newLabel1, getRes(code0), NULL);
+    jumpFalse->prev = label2;
+
+    jumpInconditional = tacCreate(TAC_JUMP, newLabel2, NULL, NULL);
+    jumpInconditional->prev = code1;
+
+    label1 = tacCreate(TAC_LABEL, newLabel1, NULL, NULL);
+    label1->prev = jumpInconditional;
+
+    return tacJoin(jumpFalse, label1);
 }
 
 //Code Generation
@@ -192,9 +260,51 @@ TacNode* generateCode(AstNode* node) {
             result = tacJoin(code[0], tacCreate(TAC_COPY, node->symbol, getRes(code[0]), NULL));
             break;
         
+        case AST_LEFT_ASSIGN_VECTOR:
+        case AST_RIGHT_ASSIGN_VECTOR:
+            result = tripleTacJoinFirst(code[0], code[1], tacCreate(TAC_COPY, node->symbol, getRes(code[0]), getRes(code[1])));
+            break;
 
         case AST_IF: 
             result = makeIfThen(code[0], code[1]);
+            break;
+        case AST_IF_ELSE:
+            result = makeIfThenElse(code[0], code[1], code[2]);
+            break;
+        case AST_WHILE:
+            result = makeWhile(code[0], code[1]);
+            break;
+
+        case AST_RETURN:
+            result = tacCreate(TAC_RETURN, NULL, getRes(code[0]), NULL);
+            break;
+        case AST_PRINT:
+            result = tacJoin(code[0], tacCreate(TAC_PRINT, NULL, getRes(code[0]), NULL));
+            break;
+        case AST_READ:
+            result = tacCreate(TAC_READ, node->symbol, NULL, NULL);
+            break;
+
+        case AST_PRINT_ARG1:
+        case AST_PRINT_ARG2:
+            result = makeBinaryOperation(TAC_PRINT_ARG, code[0], code[1]);
+            break;
+
+        case AST_FUNCAO_CHAMADA:
+            //result = tacJoin(code[0], tacCreate(TAC_FUNCAO_CHAMADA, node->symbol, getRes(code[0]), NULL));
+            result = makeUnaryOperationWithSymbol(TAC_FUNCAO_CHAMADA, node->symbol, code[0]);
+            break;
+
+        case AST_FUNCAO_CABECALHO:
+            result = makeBinaryOperationwithSymbol(TAC_FUNCAO_CABECALHO, node->symbol, code[0], code[1]);
+            break;
+        case AST_LISTA_PARAMETROS_DECLARACAO:
+        case AST_LISTA_PARAMETROS_DECLARACAO_C:
+            result = makeBinaryOperationwithSymbol(TAC_LISTA_PARAMETROS_DECLARACAO, node->symbol, code[0], code[1]);
+            break;
+
+        case AST_VETOR_DECLARACAO_INIT:
+            //result = 
             break;
 
         default: // return union of code for all children(subtrees)

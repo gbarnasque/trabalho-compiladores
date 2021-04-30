@@ -31,11 +31,15 @@ TacNode* quadTacJoinFirst(TacNode*, TacNode*, TacNode*, TacNode*);
 HashNode* getRes(TacNode*);
 
 // Makes to make life easier
+TacNode* makeUnaryOperationWithSymbol(int, HashNode*, TacNode*);
 TacNode* makeUnaryOperation(int, TacNode*);
+TacNode* makeBinaryOperationwithSymbol(int, HashNode*, TacNode*, TacNode*);
 TacNode* makeBinaryOperation(int, TacNode*, TacNode*);
 TacNode* makeIfThen(TacNode*, TacNode*);
+TacNode* makeIfThenElse(TacNode*, TacNode*, TacNode*);
+TacNode* makeWhile(TacNode*, TacNode*);
 
-//Code Generation
+// Code Generation
 TacNode* generateCode(AstNode*);
 
 
