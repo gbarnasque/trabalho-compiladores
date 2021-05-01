@@ -35,9 +35,12 @@ TacNode* makeUnaryOperationWithSymbol(int, HashNode*, TacNode*);
 TacNode* makeUnaryOperation(int, TacNode*);
 TacNode* makeBinaryOperationwithSymbol(int, HashNode*, TacNode*, TacNode*);
 TacNode* makeBinaryOperation(int, TacNode*, TacNode*);
+TacNode* makeTernaryOperationWithSymbol(int, HashNode*, TacNode*, TacNode*, TacNode*);
 TacNode* makeIfThen(TacNode*, TacNode*);
 TacNode* makeIfThenElse(TacNode*, TacNode*, TacNode*);
 TacNode* makeWhile(TacNode*, TacNode*);
+TacNode* makeVectorDecl(HashNode*, TacNode*, TacNode*);
+TacNode* makeVectorDeclInit(HashNode*, TacNode*, TacNode*, TacNode*);
 
 // Code Generation
 TacNode* generateCode(AstNode*);

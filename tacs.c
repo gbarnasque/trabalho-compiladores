@@ -55,6 +55,16 @@ void tacPrint(TacNode* node) {
         case TAC_FUNCAO_CHAMADA: fprintf(stderr, "TAC_FUNCAO_CHAMADA"); break;
         case TAC_FUNCAO_CABECALHO: fprintf(stderr, "TAC_FUNCAO_CABECALHO"); break; 
         case TAC_LISTA_PARAMETROS_DECLARACAO: fprintf(stderr, "TAC_LISTA_PARAMETROS_DECLARACAO"); break;
+        case TAC_VETOR_DECLARACAO: fprintf(stderr, "TAC_VETOR_DECLARACAO"); break;
+        case TAC_VETOR_TAMANHO: fprintf(stderr, "TAC_VETOR_TAMANHO"); break;
+        case TAC_CONTINUE_VEC_DECL: fprintf(stderr, "TAC_CONTINUE_VEC_DECL"); break;
+        case TAC_VARIAVEL: fprintf(stderr, "TAC_VARIAVEL"); break;
+        case TAC_VARIAVEL_START: fprintf(stderr, "TAC_VARIAVEL_START"); break;
+
+        case TAC_T_BOOL: fprintf(stderr, "TAC_T_BOOL"); break;
+        case TAC_T_CHAR: fprintf(stderr, "TAC_T_CHAR"); break;
+        case TAC_T_INT: fprintf(stderr, "TAC_T_INT"); break;
+        case TAC_T_POINTER: fprintf(stderr, "TAC_T_POINTER"); break;
 
         default: fprintf(stderr, "TAC_UNKNOWN"); break;
     }
@@ -122,6 +132,9 @@ TacNode* makeBinaryOperationwithSymbol(int TacType, HashNode* symbol, TacNode* c
 TacNode* makeBinaryOperation(int TacType, TacNode* code0, TacNode* code1) {
     return tripleTacJoinLast(code0, code1, tacCreate(TacType, makeTemp(), getRes(code0), getRes(code1)));
 }
+TacNode* makeTernaryOperationWithSymbol(int TacType, HashNode* symbol, TacNode* code0, TacNode* code1, TacNode* code2) {
+    return quadTacJoinLast(code0, code1, tacCreate(TacType, symbol, getRes(code0), getRes(code1)), code2);
+}
 
 TacNode* makeIfThen(TacNode* code0, TacNode* code1) {
     TacNode* jump = NULL;
@@ -185,6 +198,17 @@ TacNode* makeWhile(TacNode* code0, TacNode* code1) {
     label1->prev = jumpInconditional;
 
     return tacJoin(jumpFalse, label1);
+}
+TacNode* makeVectorDecl(HashNode* symbol, TacNode* code0, TacNode* code1) {
+    TacNode* vector = NULL;
+
+    vector = tacCreate(TAC_VETOR_DECLARACAO, symbol, getRes(code0), getRes(code1));
+    vector->prev = code1;
+    
+    return tacJoin(code0, vector);
+}
+TacNode* makeVectorDeclInit(HashNode* symbol, TacNode* code0, TacNode* code1, TacNode* code2) {
+    return makeTernaryOperationWithSymbol(TAC_VETOR_DECLARACAO, symbol, code0, code1, code2);
 }
 
 //Code Generation
@@ -303,9 +327,41 @@ TacNode* generateCode(AstNode* node) {
             result = makeBinaryOperationwithSymbol(TAC_LISTA_PARAMETROS_DECLARACAO, node->symbol, code[0], code[1]);
             break;
 
-        case AST_VETOR_DECLARACAO_INIT:
-            //result = 
+        case AST_VETOR_DECLARACAO:
+            result = makeVectorDecl(node->symbol, code[0], code[1]);
             break;
+        case AST_VETOR_DECLARACAO_INIT:
+            result = makeVectorDeclInit(node->symbol, code[0], code[1], code[2]);
+            break;
+        case AST_LITERAIS:
+            //result = tacJoin(code[0], tacCreate(TAC_CONTINUE_VEC_DECL, makeTemp(), code[1], NULL);
+            result = makeBinaryOperation(TAC_CONTINUE_VEC_DECL, code[0], code[1]);
+            break;
+        case AST_VETOR_TAMANHO:
+            result = tacCreate(TAC_VETOR_TAMANHO, node->symbol, NULL, NULL);
+            break;
+
+        case AST_VARIAVEL:
+            result = makeUnaryOperationWithSymbol(TAC_VARIAVEL, node->symbol, code[0]);
+            break;
+
+        case AST_VARIAVEIS:
+            result = makeBinaryOperation(TAC_VARIAVEL_START, code[0], code[1]);
+            break;
+
+        case AST_T_BOOL:
+            result = tacCreate(TAC_T_BOOL, makeTemp(), NULL, NULL);
+            break;
+        case AST_T_CHAR:
+            result = tacCreate(TAC_T_CHAR, makeTemp(), NULL, NULL);
+            break;
+        case AST_T_INT:
+            result = tacCreate(TAC_T_INT, makeTemp(), NULL, NULL);
+            break;
+        case AST_T_POINTER:
+            result = tacCreate(TAC_T_POINTER, makeTemp(), NULL, NULL);
+            break;
+            
 
         default: // return union of code for all children(subtrees)
             //result = tacJoin(code[0], tacJoin(code[1], tacJoin(code[2], code[3])));
